@@ -27,10 +27,6 @@ const App = () => {
   const newRegion = useRef<Region | undefined>(undefined)
   const [ firstMarkerTime, setFirstMarkerTime ] = useState(0)
 
-  const xToSec = (x: number) => {
-    return wavesurfer?.getScroll()  + x / zoom
-  }
-
   const { wavesurfer, isPlaying, currentTime } = useWavesurfer({
     container: containerRef,
     height: 100,
@@ -45,25 +41,39 @@ const App = () => {
     plugins: useMemo(() => [regions, timeline, minimap], []),
   })
 
+  const xToSec = (x: number) => {
+    return wavesurfer!.getScroll()  + x / zoom
+  }
+
   useEffect(() => {
-    document.addEventListener("keydown", createNewRegion)
+    document.addEventListener("keydown", handleKeyPress)
     // cleanup function
-    return () => document.removeEventListener('keydown', createNewRegion)
+    return () => document.removeEventListener('keydown', handleKeyPress)
   }, [onMouse, mousePos])
 
-  const createNewRegion = (event: KeyboardEvent) => {
+  const handleKeyPress = (event: KeyboardEvent) => {
     if (event.key == "r" && onMouse) {
+      console.log(onMouse)
+      createNewRegion()
+    }
+  }
+
+  const createNewRegion = () => {
       const seconds = xToSec(mousePos.x)
       newRegion.current = regions.addRegion({start: seconds, end: seconds+0.1})
       setFirstMarkerTime(seconds)
-
+      // add click event listener to stop region "dragging" via clicking
       wavesurfer?.once('click', () => {
         newRegion.current = undefined
         setFirstMarkerTime(0)
       })
     }
-  }
-  
+
+  useEffect(() => wavesurfer?.on('dblclick', () => {
+    console.log("check")
+    createNewRegion()
+  })
+)
   const handleMouseMove = (event: React.MouseEvent<HTMLElement>) => {
     setMousePos({x: event.clientX, y: event.clientY})
     
