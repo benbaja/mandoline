@@ -5,6 +5,7 @@ import Timeline from 'wavesurfer.js/dist/plugins/timeline.esm.js'
 import Regions, { Region } from 'wavesurfer.js/dist/plugins/regions.esm.js'
 import Minimap from 'wavesurfer.js/dist/plugins/minimap.esm.js'
 import audioUrl from './assets/audio.wav'
+import WaveSurfer from 'wavesurfer.js'
 
 const formatTime = (seconds: number) => [seconds / 60, seconds % 60].map((v) => `0${Math.floor(v)}`.slice(-2)).join(':')
 
@@ -41,8 +42,8 @@ const App = () => {
     plugins: useMemo(() => [regions, timeline, minimap], []),
   })
 
-  const xToSec = (x: number) => {
-    return wavesurfer!.getScroll()  + x / zoom
+  const xToSec = (x: number, ws: WaveSurfer | null) => {
+    return ws ? ws.getScroll()  + x / zoom : 0
   }
 
   useEffect(() => {
@@ -59,7 +60,7 @@ const App = () => {
   }
 
   const createNewRegion = () => {
-      const seconds = xToSec(mousePos.x)
+      const seconds = xToSec(mousePos.x, wavesurfer)
       newRegion.current = regions.addRegion({start: seconds, end: seconds+0.1})
       setFirstMarkerTime(seconds)
       // add click event listener to stop region "dragging" via clicking
@@ -70,7 +71,6 @@ const App = () => {
     }
 
   useEffect(() => wavesurfer?.on('dblclick', () => {
-    console.log("check")
     createNewRegion()
   })
 )
@@ -79,11 +79,15 @@ const App = () => {
     
     if (newRegion.current) {
       // handle end section of region
-      const mouseOverTime = xToSec(event.clientX)
+      const mouseOverTime = xToSec(event.clientX, wavesurfer)
       const regionOptions = mouseOverTime > firstMarkerTime ? {start: firstMarkerTime, end: mouseOverTime} : {start: mouseOverTime, end: firstMarkerTime}
       newRegion.current.setOptions(regionOptions)
     }
   }
+
+  // minimap.on('interaction', (e) => {
+  //   console.log(e)
+  // })
 
   const onPlayPause = useCallback(() => {
     wavesurfer && wavesurfer.playPause()
