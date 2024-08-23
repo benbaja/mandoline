@@ -27,8 +27,8 @@ const App = () => {
   const [ mousePos, setMousePos ] = useState({x: 0, y: 0})
   const newRegion = useRef<Region | undefined>(undefined)
   const [ firstMarkerTime, setFirstMarkerTime ] = useState(0)
-  const [ highlightedRegionID, setHighlightedRegionID ] = useState<string | null>()
-  const [ createdRegionsIDs, setCreatedRegionsIDs ] = useState<[string] | []>([])
+  const [ highlightedRegion, setHighlightedRegion ] = useState<Region | null>()
+  const [ createdRegions, setCreatedRegions ] = useState<[Region] | []>([])
 
   const { wavesurfer, isPlaying, currentTime } = useWavesurfer({
     container: containerRef,
@@ -51,17 +51,14 @@ const App = () => {
   useEffect(() => {
     // set-up region events
     regions.on('region-clicked', (region) => {
-      setHighlightedRegionID(region.id)
+      setHighlightedRegion(region)
     })
     regions.on('region-created', (region) => {
-      setCreatedRegionsIDs([...createdRegionsIDs, region.id] as [string])
+      setCreatedRegions([...createdRegions, region] as [Region])
     })
 })
 
   const moveRegion = () => {
-    const allRegions : Region[] = regions.getRegions()
-    const highlightedRegion : Region | undefined = allRegions.find(region => region.id === highlightedRegionID)
-    console.log(highlightedRegion)
     if (highlightedRegion) {
       highlightedRegion.setOptions({start: 0, end:1})
     }
@@ -139,8 +136,7 @@ const App = () => {
 
       <p>Current time: {formatTime(currentTime)}</p>
 
-      <p>{highlightedRegionID}</p>
-      <p>{createdRegionsIDs}</p>
+      <p>{highlightedRegion?.id}</p>
       <div style={{ margin: '1em 0', display: 'flex', gap: '1em' }}>
 
         <button onClick={onPlayPause} style={{ minWidth: '5em' }}>
