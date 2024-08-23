@@ -27,6 +27,8 @@ const App = () => {
   const [ mousePos, setMousePos ] = useState({x: 0, y: 0})
   const newRegion = useRef<Region | undefined>(undefined)
   const [ firstMarkerTime, setFirstMarkerTime ] = useState(0)
+  const [ highlightedRegionID, setHighlightedRegionID ] = useState<string | null>()
+  const [ createdRegionsIDs, setCreatedRegionsIDs ] = useState<[string] | []>([])
 
   const { wavesurfer, isPlaying, currentTime } = useWavesurfer({
     container: containerRef,
@@ -44,6 +46,25 @@ const App = () => {
 
   const xToSec = (x: number, ws: WaveSurfer | null) => {
     return ws ? ws.getScroll()  + x / zoom : 0
+  }
+
+  useEffect(() => {
+    // set-up region events
+    regions.on('region-clicked', (region) => {
+      setHighlightedRegionID(region.id)
+    })
+    regions.on('region-created', (region) => {
+      setCreatedRegionsIDs([...createdRegionsIDs, region.id] as [string])
+    })
+})
+
+  const moveRegion = () => {
+    const allRegions : Region[] = regions.getRegions()
+    const highlightedRegion : Region | undefined = allRegions.find(region => region.id === highlightedRegionID)
+    console.log(highlightedRegion)
+    if (highlightedRegion) {
+      highlightedRegion.setOptions({start: 0, end:1})
+    }
   }
 
   useEffect(() => {
@@ -103,6 +124,7 @@ const App = () => {
 
   return (
     <>
+      <button onClick={moveRegion}>:)</button>
       <div 
         ref={containerRef} 
         style={{ overflowX: 'hidden', width: "580px"}} 
@@ -117,7 +139,8 @@ const App = () => {
 
       <p>Current time: {formatTime(currentTime)}</p>
 
-      <p>{mousePos.x} {mousePos.y}</p>
+      <p>{highlightedRegionID}</p>
+      <p>{createdRegionsIDs}</p>
       <div style={{ margin: '1em 0', display: 'flex', gap: '1em' }}>
 
         <button onClick={onPlayPause} style={{ minWidth: '5em' }}>
