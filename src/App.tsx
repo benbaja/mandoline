@@ -2,7 +2,7 @@ import * as React from 'react'
 const { useMemo, useCallback, useRef, useEffect, useState } = React
 import { useWavesurfer } from '@wavesurfer/react'
 import Timeline from 'wavesurfer.js/dist/plugins/timeline.esm.js'
-import Regions from 'wavesurfer.js/dist/plugins/regions.esm.js'
+import Regions, { Region } from 'wavesurfer.js/dist/plugins/regions.esm.js'
 import Minimap from 'wavesurfer.js/dist/plugins/minimap.esm.js'
 import audioUrl from './assets/audio.wav'
 
@@ -22,6 +22,14 @@ const minimap = Minimap.create({
 const App = () => {
   const containerRef = useRef(null)
   const [ zoom, setZoom ] = useState(100)
+  const [ onMouse, setOnMouse ] = useState(false)
+  const [ mousePos, setMousePos ] = useState({x: 0, y: 0})
+  const newRegion = useRef<Region | undefined>(undefined)
+  const [ firstMarkerTime, setFirstMarkerTime ] = useState(0)
+
+  const xToSec = (x: number) => {
+    return wavesurfer?.getScroll()  + x / zoom
+  }
 
   const { wavesurfer, isPlaying, currentTime } = useWavesurfer({
     container: containerRef,
@@ -32,29 +40,44 @@ const App = () => {
     hideScrollbar: true,
     minPxPerSec: 100,
     dragToSeek: true,
+    autoCenter: true,
+    autoScroll: true,
     plugins: useMemo(() => [regions, timeline, minimap], []),
   })
 
-  useEffect(() => wavesurfer?.on('dblclick', () => {
-      const clickTime = wavesurfer.getCurrentTime()
-      console.log(clickTime)
-      const addedRegion = regions.addRegion({start: clickTime})
-      wavesurfer.on('drag', (dragX: number) => {
-        console.log(dragX)
+  useEffect(() => {
+    document.addEventListener("keydown", createNewRegion)
+    // cleanup function
+    return () => document.removeEventListener('keydown', createNewRegion)
+  }, [onMouse, mousePos])
+
+  const createNewRegion = (event: KeyboardEvent) => {
+    if (event.key == "r" && onMouse) {
+      const seconds = xToSec(mousePos.x)
+      newRegion.current = regions.addRegion({start: seconds, end: seconds+0.1})
+      setFirstMarkerTime(seconds)
+
+      wavesurfer?.once('click', () => {
+        newRegion.current = undefined
+        setFirstMarkerTime(0)
       })
-    })
-  )
-  // regions.enableDragSelection({drag: false})
+    }
+  }
+  
+  const handleMouseMove = (event: React.MouseEvent<HTMLElement>) => {
+    setMousePos({x: event.clientX, y: event.clientY})
+    
+    if (newRegion.current) {
+      // handle end section of region
+      const mouseOverTime = xToSec(event.clientX)
+      const regionOptions = mouseOverTime > firstMarkerTime ? {start: firstMarkerTime, end: mouseOverTime} : {start: mouseOverTime, end: firstMarkerTime}
+      newRegion.current.setOptions(regionOptions)
+    }
+  }
 
   const onPlayPause = useCallback(() => {
     wavesurfer && wavesurfer.playPause()
   }, [wavesurfer])
-
-  const newRegion = () => {
-    const start = wavesurfer?.getCurrentTime() as number;
-    const end = start + 2;
-    regions.addRegion({start: start, end: end})
-  }
 
   const onZoom = (event: React.ChangeEvent<HTMLInputElement>) => {
     const zoomLevel = event.target.valueAsNumber
@@ -66,8 +89,13 @@ const App = () => {
 
   return (
     <>
-      <button onClick={newRegion} style={{ minWidth: '1em' }}>+</button>
-      <div ref={containerRef} style={{ overflowX: 'hidden', width: "400px"}} />
+      <div 
+        ref={containerRef} 
+        style={{ overflowX: 'hidden', width: "580px"}} 
+        onMouseEnter={() => setOnMouse(true)} 
+        onMouseLeave={() => setOnMouse(false)}
+        onMouseMove={handleMouseMove}
+      />
 
       <input type="range" min="10" max="2000" value={zoom} onChange={onZoom} />
 
@@ -75,6 +103,7 @@ const App = () => {
 
       <p>Current time: {formatTime(currentTime)}</p>
 
+      <p>{mousePos.x} {mousePos.y}</p>
       <div style={{ margin: '1em 0', display: 'flex', gap: '1em' }}>
 
         <button onClick={onPlayPause} style={{ minWidth: '5em' }}>
