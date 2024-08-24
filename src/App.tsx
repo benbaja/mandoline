@@ -6,6 +6,7 @@ import Regions, { Region } from 'wavesurfer.js/dist/plugins/regions.esm.js'
 import Minimap from 'wavesurfer.js/dist/plugins/minimap.esm.js'
 import audioUrl from './assets/audio.wav'
 import WaveSurfer from 'wavesurfer.js'
+import Slice from './Slice'
 
 const formatTime = (seconds: number) => [seconds / 60, seconds % 60].map((v) => `0${Math.floor(v)}`.slice(-2)).join(':')
 
@@ -27,8 +28,8 @@ const App = () => {
   const [ mousePos, setMousePos ] = useState({x: 0, y: 0})
   const newRegion = useRef<Region | undefined>(undefined)
   const [ firstMarkerTime, setFirstMarkerTime ] = useState(0)
-  const [ highlightedRegion, setHighlightedRegion ] = useState<Region | null>()
-  const [ createdRegions, setCreatedRegions ] = useState<[Region] | []>([])
+  const [ highlightedSlice, setHighlightedSlice ] = useState<Slice | null>()
+  const [ createdSlices, setCreatedSlices ] = useState<[Slice] | []>([])
 
   const { wavesurfer, isPlaying, currentTime } = useWavesurfer({
     container: containerRef,
@@ -51,16 +52,18 @@ const App = () => {
   useEffect(() => {
     // set-up region events
     regions.on('region-clicked', (region) => {
-      setHighlightedRegion(region)
+      const selectedSlice = createdSlices.find(slice => slice.region.id === region.id)
+      setHighlightedSlice(selectedSlice)
     })
     regions.on('region-created', (region) => {
-      setCreatedRegions([...createdRegions, region] as [Region])
+      const newSlice = new Slice(region)
+      setCreatedSlices([...createdSlices, newSlice] as [Slice])
     })
 })
 
   const moveRegion = () => {
-    if (highlightedRegion) {
-      highlightedRegion.setOptions({start: 0, end:1})
+    if (highlightedSlice) {
+      highlightedSlice.region.setOptions({start: 0, end:1})
     }
   }
 
@@ -136,7 +139,7 @@ const App = () => {
 
       <p>Current time: {formatTime(currentTime)}</p>
 
-      <p>{highlightedRegion?.id}</p>
+      <p>{highlightedSlice?.region.id}</p>
       <div style={{ margin: '1em 0', display: 'flex', gap: '1em' }}>
 
         <button onClick={onPlayPause} style={{ minWidth: '5em' }}>
