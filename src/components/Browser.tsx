@@ -46,7 +46,7 @@ const Browser = () => {
 
   const xToSec = (x: number) => {
     console.log(x)
-    return wavesurfer.getScroll() + x / zoom
+    return wavesurfer ? (wavesurfer.getScroll() + x) / zoom : 0
   }
 
   useEffect(() => {
