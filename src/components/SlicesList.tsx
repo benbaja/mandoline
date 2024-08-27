@@ -1,10 +1,15 @@
+import Slice from "../utils/Slice"
 import SliceIndex from "./SliceIndex"
 
-const SlicesList = () => {
+interface SlicesListProps {
+  slicesListState: [ Slice[] | [], React.Dispatch<React.SetStateAction<Slice[] | []>> ]
+  highlightedSliceState: [ Slice | undefined, React.Dispatch<React.SetStateAction<Slice | undefined>> ]
+}
+const SlicesList: React.FC<SlicesListProps> = ({slicesListState, highlightedSliceState}) => {
 
   return (
     <>
-      <SliceIndex></SliceIndex>
+      <SliceIndex />
     </>
   )
 }

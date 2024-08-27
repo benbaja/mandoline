@@ -7,6 +7,11 @@ import Minimap from 'wavesurfer.js/dist/plugins/minimap.esm.js'
 import audioUrl from '../assets/audio.wav'
 import Slice from '../utils/Slice'
 
+interface browserProps {
+  slicesListState: [ Slice[] | [], React.Dispatch<React.SetStateAction<Slice[] | []>> ]
+  highlightedSliceState: [ Slice | undefined, React.Dispatch<React.SetStateAction<Slice | undefined>> ]
+}
+
 const formatTime = (seconds: number) => [seconds / 60, seconds % 60].map((v) => `0${Math.floor(v)}`.slice(-2)).join(':')
 
 const regions = Regions.create()
@@ -20,15 +25,15 @@ const minimap = Minimap.create({
 })
 
 // A React component that will render wavesurfer
-const Browser = () => {
+const Browser: React.FC<browserProps> = ({slicesListState, highlightedSliceState}) => {
   const containerRef = useRef(null)
   const [ zoom, setZoom ] = useState(100)
   const [ onMouse, setOnMouse ] = useState(false)
   const [ mousePos, setMousePos ] = useState({x: 0, y: 0})
   const newRegion = useRef<Region | undefined>(undefined)
   const [ firstMarkerTime, setFirstMarkerTime ] = useState(0)
-  const [ highlightedSlice, setHighlightedSlice ] = useState<Slice | null>()
-  const [ createdSlices, setCreatedSlices ] = useState<[Slice] | []>([])
+  const [ highlightedSlice, setHighlightedSlice ] = highlightedSliceState
+  const [ slicesList, setSlicesList ] = slicesListState
 
   const { wavesurfer, isPlaying, currentTime } = useWavesurfer({
     container: containerRef,
@@ -45,19 +50,18 @@ const Browser = () => {
   })
 
   const xToSec = (x: number) => {
-    console.log(x)
     return wavesurfer ? (wavesurfer.getScroll() + x) / zoom : 0
   }
 
   useEffect(() => {
     // set-up region events
     regions.on('region-clicked', (region) => {
-      const selectedSlice = createdSlices.find(slice => slice.region.id === region.id)
+      const selectedSlice = slicesList.find(slice => slice.region.id === region.id)
       setHighlightedSlice(selectedSlice)
     })
     regions.on('region-created', (region) => {
       const newSlice = new Slice(region)
-      setCreatedSlices([...createdSlices, newSlice] as [Slice])
+      setSlicesList([...slicesList, newSlice] as [Slice])
     })
 })
 
@@ -139,7 +143,8 @@ const Browser = () => {
 
       <p>Current time: {formatTime(currentTime)}</p>
 
-      <p>{highlightedSlice?.region.id}</p>
+      <p>{highlightedSlice ? highlightedSlice.region?.id : ''}</p>
+
       <div style={{ margin: '1em 0', display: 'flex', gap: '1em' }}>
 
         <button onClick={onPlayPause} style={{ minWidth: '5em' }}>
