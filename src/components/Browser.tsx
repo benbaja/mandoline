@@ -34,6 +34,7 @@ const Browser: React.FC<browserProps> = ({slicesListState, highlightedSliceState
   const [ firstMarkerTime, setFirstMarkerTime ] = useState(0)
   const [ highlightedSlice, setHighlightedSlice ] = highlightedSliceState
   const [ slicesList, setSlicesList ] = slicesListState
+  const [ sliceIndex, setSliceIndex ] = useState(1)
 
   const { wavesurfer, isPlaying, currentTime } = useWavesurfer({
     container: containerRef,
@@ -49,6 +50,12 @@ const Browser: React.FC<browserProps> = ({slicesListState, highlightedSliceState
     plugins: useMemo(() => [regions, timeline, minimap], []),
   })
 
+  useEffect(() => {
+    if (highlightedSlice) {
+      wavesurfer?.setTime(highlightedSlice.region.start)
+    }
+  }, [highlightedSlice])
+  
   const xToSec = (x: number) => {
     return wavesurfer ? (wavesurfer.getScroll() + x) / zoom : 0
   }
@@ -60,16 +67,17 @@ const Browser: React.FC<browserProps> = ({slicesListState, highlightedSliceState
       setHighlightedSlice(selectedSlice)
     })
     regions.on('region-created', (region) => {
-      const newSlice = new Slice(region)
+      const newSlice = new Slice(region, `slice ${sliceIndex}`)
+      setSliceIndex(sliceIndex + 1)
       setSlicesList([...slicesList, newSlice] as [Slice])
     })
+    regions.on('region-removed', (region) => {
+      const updatedSlicesList = slicesList.filter((slice) => {
+        if (slice.region.id != region.id) {slice}
+      })
+      setSlicesList(updatedSlicesList)
+    })
 })
-
-  const moveRegion = () => {
-    if (highlightedSlice) {
-      highlightedSlice.region.setOptions({start: 0, end:1})
-    }
-  }
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyPress)
@@ -110,10 +118,6 @@ const Browser: React.FC<browserProps> = ({slicesListState, highlightedSliceState
     }
   }
 
-  // minimap.on('interaction', (e) => {
-  //   console.log(e)
-  // })
-
   const onPlayPause = useCallback(() => {
     wavesurfer && wavesurfer.playPause()
   }, [wavesurfer])
@@ -128,7 +132,6 @@ const Browser: React.FC<browserProps> = ({slicesListState, highlightedSliceState
 
   return (
     <>
-      <button onClick={moveRegion}>:)</button>
       <div 
         ref={containerRef} 
         style={{ overflowX: 'hidden', width: "580px"}} 
@@ -139,11 +142,7 @@ const Browser: React.FC<browserProps> = ({slicesListState, highlightedSliceState
 
       <input type="range" min="10" max="2000" value={zoom} onChange={onZoom} />
 
-      <p>Current audio: {audioUrl}</p>
-
       <p>Current time: {formatTime(currentTime)}</p>
-
-      <p>{highlightedSlice ? highlightedSlice.region?.id : ''}</p>
 
       <div style={{ margin: '1em 0', display: 'flex', gap: '1em' }}>
 

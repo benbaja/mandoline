@@ -6,10 +6,40 @@ interface SlicesListProps {
   highlightedSliceState: [ Slice | undefined, React.Dispatch<React.SetStateAction<Slice | undefined>> ]
 }
 const SlicesList: React.FC<SlicesListProps> = ({slicesListState, highlightedSliceState}) => {
+  const [ slicesList, setSlicesList ] = slicesListState
+  const [ highlightedSlice, setHighlightedSlice ] = highlightedSliceState
+
+  const deleteSlice = (sliceToDelete: Slice) => {
+    sliceToDelete.region.remove()
+    const updatedSlicesList : Slice[] | [] = slicesList.filter((item: Slice) => {
+      if (item !== sliceToDelete) {
+        return item
+      }
+    })
+    setSlicesList(updatedSlicesList)
+  }
+
+  const highlightSlice = (clickedSlice: Slice) => {
+    setHighlightedSlice(clickedSlice)
+  }
 
   return (
     <>
-      <SliceIndex />
+      {slicesList.map((slice) => {
+          return(
+            <SliceIndex key={slice.id}
+                        slice={slice} 
+                        highlightSlice={highlightSlice}
+                        deleteSlice={deleteSlice}
+                        isHighlighted={
+                          highlightedSlice 
+                          ? slice.id == highlightedSlice.id 
+                          : false
+                        }
+            />
+          )
+        })                            
+      }
     </>
   )
 }
