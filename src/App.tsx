@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { StrictMode, useState } from "react"
 import BrowserController from "./components/BrowserController"
 import SlicesMenu from "./components/SlicesMenu"
 import Slice from "./utils/Slice"
@@ -10,6 +10,7 @@ const App = () => {
 
   return (
     <>
+      <StrictMode>
       <BrowserController
          slicesListState={[slicesList, setSlicesList]}
          highlightedSliceState={[highlightedSlice, setHighlightedSlice]}
@@ -18,6 +19,7 @@ const App = () => {
          slicesListState={[slicesList, setSlicesList]}
          highlightedSliceState={[highlightedSlice, setHighlightedSlice]}
       />
+      </StrictMode>
     </>
   )
 }

@@ -1,3 +1,4 @@
+import audioEncoder from 'audio-encoder'
 import {Region} from 'wavesurfer.js/dist/plugins/regions.esm.js'
 const audioCtx = new AudioContext()
 
@@ -6,6 +7,7 @@ class Slice {
     public id: string
     public name: string
     private sliceBuffer: AudioBuffer | undefined
+    public sliceBlob: Blob | undefined
 
     constructor(region: Region, name: string, browserBuffer: AudioBuffer | null) {
         this.region = region
@@ -13,12 +15,19 @@ class Slice {
         this.name = name
         if (browserBuffer) {
             this.sliceBuffer = this.extractBuffer(browserBuffer)
-        } 
+            audioEncoder(this.sliceBuffer, 0, null, (blob: Blob) => {
+                this.sliceBlob = blob
+            })
+        }
     }
 
     public updateBuffer(browserBuffer: AudioBuffer | null) {
         if (browserBuffer) {
+            console.log('updated')
             this.sliceBuffer = this.extractBuffer(browserBuffer)
+            audioEncoder(this.sliceBuffer, 0, null, (blob: Blob) => {
+                this.sliceBlob = blob
+            })
         }
     }
 
@@ -37,10 +46,6 @@ class Slice {
         }
 
         return slicedBuffer
-    }
-
-    public getSliceBuffer() {
-        return this.sliceBuffer
     }
 
     public getLength() {

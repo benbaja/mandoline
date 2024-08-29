@@ -1,10 +1,18 @@
+
+import Slice from "../utils/Slice"
 import SliceWaveform from "./SliceWaveform"
 
-const SliceController = () => {
+interface SliceControllerProps {
+  highlightedSliceState: [ Slice | undefined, React.Dispatch<React.SetStateAction<Slice | undefined>> ]
+}
+
+const SliceController: React.FC<SliceControllerProps> = ({highlightedSliceState}) => {
 
   return (
     <>
-      <SliceWaveform></SliceWaveform>
+      <SliceWaveform
+        highlightedSliceState={highlightedSliceState} 
+      />
     </>
   )
 }

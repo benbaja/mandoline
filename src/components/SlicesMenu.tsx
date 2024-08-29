@@ -15,7 +15,9 @@ const SlicesMenu: React.FC<SlicesMenuProps> = ({slicesListState, highlightedSlic
         slicesListState={slicesListState}
         highlightedSliceState={highlightedSliceState}
       />
-      <SliceController />
+      <SliceController
+        highlightedSliceState={highlightedSliceState} 
+      />
     </>
   )
 }

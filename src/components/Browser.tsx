@@ -35,6 +35,7 @@ const Browser: React.FC<browserProps> = ({slicesListState, highlightedSliceState
   const [ highlightedSlice, setHighlightedSlice ] = highlightedSliceState
   const [ slicesList, setSlicesList ] = slicesListState
   const [ sliceIndex, setSliceIndex ] = useState(1)
+  let browserBuffer : AudioBuffer | null = null
 
   const { wavesurfer, isPlaying, currentTime } = useWavesurfer({
     container: containerRef,
@@ -48,6 +49,12 @@ const Browser: React.FC<browserProps> = ({slicesListState, highlightedSliceState
     autoCenter: true,
     autoScroll: true,
     plugins: useMemo(() => [regions, timeline, minimap], []),
+  })
+
+  useEffect(() => {
+    if (wavesurfer) {
+      browserBuffer = wavesurfer.getDecodedData() 
+    }
   })
 
   useEffect(() => {
@@ -67,9 +74,15 @@ const Browser: React.FC<browserProps> = ({slicesListState, highlightedSliceState
       setHighlightedSlice(selectedSlice)
     })
     regions.on('region-created', (region) => {
-      const newSlice = new Slice(region, `slice ${sliceIndex}`, wavesurfer!.getDecodedData())
+      console.log("fire")
+      const newSlice = new Slice(region, `slice ${sliceIndex}`, browserBuffer)
       setSliceIndex(sliceIndex + 1)
       setSlicesList([...slicesList, newSlice] as [Slice])
+    })
+    regions.on('region-updated', (region) => {
+      const selectedSlice = slicesList.find(slice => slice.region.id === region.id)
+      selectedSlice && selectedSlice.updateBuffer(browserBuffer)
+      setHighlightedSlice(selectedSlice)
     })
     regions.on('region-removed', (region) => {
       const updatedSlicesList = slicesList.filter((slice) => {
@@ -77,6 +90,8 @@ const Browser: React.FC<browserProps> = ({slicesListState, highlightedSliceState
       })
       setSlicesList(updatedSlicesList)
     })
+
+    return () => regions.unAll()
 })
 
   useEffect(() => {
