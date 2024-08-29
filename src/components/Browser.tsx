@@ -55,7 +55,7 @@ const Browser: React.FC<browserProps> = ({slicesListState, highlightedSliceState
       wavesurfer?.setTime(highlightedSlice.region.start)
     }
   }, [highlightedSlice])
-  
+
   const xToSec = (x: number) => {
     return wavesurfer ? (wavesurfer.getScroll() + x) / zoom : 0
   }
@@ -67,7 +67,7 @@ const Browser: React.FC<browserProps> = ({slicesListState, highlightedSliceState
       setHighlightedSlice(selectedSlice)
     })
     regions.on('region-created', (region) => {
-      const newSlice = new Slice(region, `slice ${sliceIndex}`)
+      const newSlice = new Slice(region, `slice ${sliceIndex}`, wavesurfer!.getDecodedData())
       setSliceIndex(sliceIndex + 1)
       setSlicesList([...slicesList, newSlice] as [Slice])
     })
