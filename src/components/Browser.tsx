@@ -82,7 +82,7 @@ const Browser: React.FC<browserProps> = ({slicesListState, highlightedSliceState
     regions.on('region-updated', (region) => {
       const selectedSlice = slicesList.find(slice => slice.region.id === region.id)
       selectedSlice && selectedSlice.updateBuffer(browserBuffer)
-      setHighlightedSlice(selectedSlice)
+      setHighlightedSlice(selectedSlice?.shallowCopy())
     })
     regions.on('region-removed', (region) => {
       const updatedSlicesList = slicesList.filter((slice) => {

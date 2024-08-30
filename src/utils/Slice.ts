@@ -55,6 +55,11 @@ class Slice {
         const min = Math.floor(roundedLength / 60).toString().padStart(2, "0")
         return min == '00' ? `${sec}.${ms}` : `${min}:${sec}.${ms}`
     }
+
+    public shallowCopy() {
+        const template = Object.create(Object.getPrototypeOf(this))
+        return Object.assign(template, this)
+    }
 } 
 
 export default Slice
