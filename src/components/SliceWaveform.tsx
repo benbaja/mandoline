@@ -27,7 +27,7 @@ const SliceWaveform: React.FC<SliceWaveformProps> = ({highlightedSliceState}) =>
       console.log(sliceBlob)
       wavesurfer.loadBlob(sliceBlob)
     }
-  }, [highlightedSlice?.sliceBlob])
+  }, [highlightedSlice])
 
   return (
     <>

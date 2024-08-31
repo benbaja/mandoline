@@ -1,4 +1,4 @@
-import audioEncoder from 'audio-encoder'
+import { encodeWavFileFromAudioBuffer } from 'wav-file-encoder'
 import {Region} from 'wavesurfer.js/dist/plugins/regions.esm.js'
 const audioCtx = new AudioContext()
 
@@ -8,27 +8,26 @@ class Slice {
     public name: string
     private sliceBuffer: AudioBuffer | undefined
     public sliceBlob: Blob | undefined
+    public isLooped: boolean
+    public isBeingCreated: boolean
 
-    constructor(region: Region, name: string, browserBuffer: AudioBuffer | null) {
+
+    constructor(region: Region, name: string) {
+        this.isBeingCreated = true
         this.region = region
         this.id = this.region.id
         this.name = name
-        if (browserBuffer) {
-            this.sliceBuffer = this.extractBuffer(browserBuffer)
-            audioEncoder(this.sliceBuffer, 0, null, (blob: Blob) => {
-                this.sliceBlob = blob
-            })
-        }
+        this.isLooped = false
+        this.sliceBlob = undefined
+        this.sliceBlob = undefined
     }
 
-    public updateBuffer(browserBuffer: AudioBuffer | null) {
+    public setBuffer(browserBuffer: AudioBuffer | null) {
         if (browserBuffer) {
-            console.log('updated')
+            console.log('updated buffer')
             this.sliceBuffer = this.extractBuffer(browserBuffer)
-            audioEncoder(this.sliceBuffer, 0, null, (blob: Blob) => {
-                this.sliceBlob = blob
-            })
-        }
+            this.sliceBlob = new Blob([encodeWavFileFromAudioBuffer(this.sliceBuffer, 1)], {type: "audio/wav"})
+            }
     }
 
     private extractBuffer(wsBuffer: AudioBuffer) {
@@ -56,9 +55,14 @@ class Slice {
         return min == '00' ? `${sec}.${ms}` : `${min}:${sec}.${ms}`
     }
 
+    // used in some cases to trigger component re-render after property modification
     public shallowCopy() {
         const template = Object.create(Object.getPrototypeOf(this))
         return Object.assign(template, this)
+    }
+
+    public toggleLoop() {
+
     }
 } 
 

@@ -30,7 +30,6 @@ const Browser: React.FC<browserProps> = ({slicesListState, highlightedSliceState
   const [ zoom, setZoom ] = useState(100)
   const [ onMouse, setOnMouse ] = useState(false)
   const [ mousePos, setMousePos ] = useState({x: 0, y: 0})
-  const newRegion = useRef<Region | undefined>(undefined)
   const [ firstMarkerTime, setFirstMarkerTime ] = useState(0)
   const [ highlightedSlice, setHighlightedSlice ] = highlightedSliceState
   const [ slicesList, setSlicesList ] = slicesListState
@@ -75,13 +74,11 @@ const Browser: React.FC<browserProps> = ({slicesListState, highlightedSliceState
     })
     regions.on('region-created', (region) => {
       console.log("fire")
-      const newSlice = new Slice(region, `slice ${sliceIndex}`, browserBuffer)
-      setSliceIndex(sliceIndex + 1)
-      setSlicesList([...slicesList, newSlice] as [Slice])
     })
     regions.on('region-updated', (region) => {
       const selectedSlice = slicesList.find(slice => slice.region.id === region.id)
-      selectedSlice && selectedSlice.updateBuffer(browserBuffer)
+      selectedSlice?.setBuffer(browserBuffer)
+      selectedSlice && console.log("region updated")
       setHighlightedSlice(selectedSlice?.shallowCopy())
     })
     regions.on('region-removed', (region) => {
@@ -103,33 +100,43 @@ const Browser: React.FC<browserProps> = ({slicesListState, highlightedSliceState
   const handleKeyPress = (event: KeyboardEvent) => {
     if (event.key == "r" && onMouse) {
       console.log(onMouse)
-      createNewRegion()
+      createNewSlice()
     }
   }
 
-  const createNewRegion = () => {
-      const seconds = xToSec(mousePos.x)
-      newRegion.current = regions.addRegion({start: seconds, end: seconds+0.1})
-      setFirstMarkerTime(seconds)
+  const createNewSlice = () => {
+      const startSec = xToSec(mousePos.x)
+
+      const newSlice = new Slice(
+        regions.addRegion({start: startSec, end: startSec+0.1}), 
+        `slice ${sliceIndex}`
+      )
+      setSliceIndex(sliceIndex + 1)
+      setHighlightedSlice(newSlice)
+      setSlicesList([...slicesList, newSlice] as [Slice])
+      setFirstMarkerTime(startSec)
       // add click event listener to stop region "dragging" via clicking
       wavesurfer?.once('click', () => {
-        newRegion.current = undefined
+        newSlice.isBeingCreated = false
+        newSlice.setBuffer(browserBuffer)
+        setHighlightedSlice(newSlice.shallowCopy())
         setFirstMarkerTime(0)
       })
     }
 
   useEffect(() => wavesurfer?.on('dblclick', () => {
-    createNewRegion()
+    createNewSlice()
   })
 )
   const handleMouseMove = (event: React.MouseEvent<HTMLElement>) => {
     setMousePos({x: event.clientX, y: event.clientY})
     
-    if (newRegion.current) {
+    if (highlightedSlice && highlightedSlice.isBeingCreated) {
       // handle end section of region
       const mouseOverTime = xToSec(event.clientX)
-      const regionOptions = mouseOverTime > firstMarkerTime ? {start: firstMarkerTime, end: mouseOverTime} : {start: mouseOverTime, end: firstMarkerTime}
-      newRegion.current.setOptions(regionOptions)
+      const sliceStart = firstMarkerTime
+      const regionOptions = mouseOverTime > sliceStart ? {start: sliceStart, end: mouseOverTime} : {start: mouseOverTime, end: sliceStart}
+      highlightedSlice.region.setOptions(regionOptions)
     }
   }
 
