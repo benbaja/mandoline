@@ -9,12 +9,13 @@ interface sliceIdxProps {
 }
 
 const SliceIndex: React.FC<sliceIdxProps> = ({slice, isHighlighted, highlightSlice, deleteSlice}) => {
-  const [ sliceName, setSliceName ] = useState(slice.name)
+  const [ sliceName, setSliceName ] = useState(slice.settings.name)
   
   const handleDelete = () => deleteSlice(slice)
   const handleClick = () => highlightSlice(slice)
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSliceName(event.target.value)
+    slice.settings.name = event.target.value
   }
 
 

@@ -2,7 +2,7 @@ import * as React from 'react'
 const { useMemo, useCallback, useRef, useEffect, useState } = React
 import { useWavesurfer } from '@wavesurfer/react'
 import Timeline from 'wavesurfer.js/dist/plugins/timeline.esm.js'
-import Regions, { Region } from 'wavesurfer.js/dist/plugins/regions.esm.js'
+import Regions from 'wavesurfer.js/dist/plugins/regions.esm.js'
 import Minimap from 'wavesurfer.js/dist/plugins/minimap.esm.js'
 import audioUrl from '../assets/audio.wav'
 import Slice from '../utils/Slice'
@@ -72,9 +72,6 @@ const Browser: React.FC<browserProps> = ({slicesListState, highlightedSliceState
     regions.on('region-clicked', (region) => {
       const selectedSlice = slicesList.find(slice => slice.region.id === region.id)
       setHighlightedSlice(selectedSlice)
-    })
-    regions.on('region-created', (region) => {
-      console.log("fire")
     })
     regions.on('region-updated', (region) => {
       const selectedSlice = slicesList.find(slice => slice.region.id === region.id)

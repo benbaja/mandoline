@@ -8,15 +8,28 @@ interface SliceControllerProps {
 }
 
 const SliceController: React.FC<SliceControllerProps> = ({highlightedSliceState}) => {
+  const [highlightedSlice, setHighlightedSlice] = highlightedSliceState
   const [isPlaying, setIsPlaying] = useState(false)
-  const [isLooped, setIsLooped] = useState(false)
+  const [isLooped, setIsLooped] = useState(highlightedSlice?.settings.isLooped || false)
 
   const handlePlayPause = () => {
     setIsPlaying(!isPlaying)
   }
 
   const handleLoop = () => {
-    setIsLooped(!isLooped)
+    if (highlightedSlice) {
+      highlightedSlice.settings.isLooped = !highlightedSlice.settings.isLooped
+      setIsLooped(!isLooped)
+    }
+  }
+
+  const handleReverse = () => {
+    if (highlightedSlice) {
+      console.log("reverse click")
+      highlightedSlice.settings.isReversed = !highlightedSlice.settings.isReversed
+      highlightedSlice.reverse()
+      setHighlightedSlice(highlightedSlice.shallowCopy())
+    }
   }
 
   return (
@@ -24,7 +37,7 @@ const SliceController: React.FC<SliceControllerProps> = ({highlightedSliceState}
       <button onClick={handlePlayPause}>{isPlaying ? "Pause" : "Play"}</button>
       <button onClick={handleLoop}>{isLooped ? "Looped" : "Loop"}</button>
       <button>Trim</button>
-      <button>Reverse</button>
+      <button onClick={handleReverse}>{highlightedSlice?.settings.isReversed ? "=>" : "<="}</button>
       <SliceWaveform
         highlightedSliceState={highlightedSliceState} 
         isPlayingState={[isPlaying, setIsPlaying]}
