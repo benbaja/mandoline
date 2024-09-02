@@ -27,6 +27,8 @@ const SliceWaveform: React.FC<SliceWaveformProps> = ({highlightedSliceState, isP
   useEffect(() => {
     const sliceBlob = highlightedSlice?.sliceBlob
     if (wavesurfer && sliceBlob) {
+      wavesurfer.pause()
+      setIsPlaying(false)
       wavesurfer.loadBlob(sliceBlob)
     }
   }, [highlightedSlice])
@@ -38,7 +40,7 @@ const SliceWaveform: React.FC<SliceWaveformProps> = ({highlightedSliceState, isP
   useEffect(() => {
     wavesurfer?.on('finish', () => {
       // isLooped ? wavesurfer.play : setIsPlaying(false)
-      if (isLooped) {
+      if (highlightedSlice?.settings.isLooped) {
         wavesurfer.play()
       } else {
         setIsPlaying(false)
@@ -46,7 +48,7 @@ const SliceWaveform: React.FC<SliceWaveformProps> = ({highlightedSliceState, isP
     })
 
     return () => wavesurfer?.unAll()
-  }, [wavesurfer, isLooped])
+  }, [highlightedSlice, isLooped])
 
   return (
     <>

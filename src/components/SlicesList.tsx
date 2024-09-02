@@ -27,13 +27,13 @@ const SlicesList: React.FC<SlicesListProps> = ({slicesListState, highlightedSlic
     <>
       {slicesList.map((slice) => {
           return(
-            <SliceIndex key={slice.id}
+            <SliceIndex key={slice.region.id}
                         slice={slice} 
                         highlightSlice={highlightSlice}
                         deleteSlice={deleteSlice}
                         isHighlighted={
                           highlightedSlice 
-                          ? slice.id == highlightedSlice.id 
+                          ? slice.region.id == highlightedSlice.region.id 
                           : false
                         }
             />
