@@ -47,6 +47,7 @@ const Browser: React.FC<browserProps> = ({slicesListState, highlightedSliceState
     dragToSeek: true,
     autoCenter: true,
     autoScroll: true,
+    sampleRate: 44100,
     plugins: useMemo(() => [regions, timeline, minimap], []),
   })
 

@@ -8,15 +8,27 @@ interface SliceControllerProps {
 }
 
 const SliceController: React.FC<SliceControllerProps> = ({highlightedSliceState}) => {
-  useState
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [isLooped, setIsLooped] = useState(false)
+
+  const handlePlayPause = () => {
+    setIsPlaying(!isPlaying)
+  }
+
+  const handleLoop = () => {
+    setIsLooped(!isLooped)
+  }
+
   return (
     <>
-      <button>Play</button>
-      <button>Loop</button>
+      <button onClick={handlePlayPause}>{isPlaying ? "Pause" : "Play"}</button>
+      <button onClick={handleLoop}>{isLooped ? "Looped" : "Loop"}</button>
       <button>Trim</button>
       <button>Reverse</button>
       <SliceWaveform
         highlightedSliceState={highlightedSliceState} 
+        isPlayingState={[isPlaying, setIsPlaying]}
+        isLooped={isLooped}
       />
     </>
   )
