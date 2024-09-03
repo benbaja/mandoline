@@ -25,53 +25,50 @@ const BrowserController: React.FC<BCProps> = ({slicesListState, highlightedSlice
     setCobaltURL(event.target.value)
   }
 
-  const handleCobalt = () => {
-    if (isUrlValid) {
-      const contentURL = encodeURI(cobaltURL)
-      const initParams : RequestInit = {
-        method: "POST",
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          url: contentURL,
-          aFormat: "best",
-          filenamePattern: "basic",
-          isAudioOnly: true,
-          isTTFullAudio: true
-        })
+  const handleColbaltAsync = async () => {
+    if (!isUrlValid) {
+      throw new Error("Invalid URL")
+    }
+    const contentURL = encodeURI(cobaltURL)
+    const initParams : RequestInit = {
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        url: contentURL,
+        aFormat: "best",
+        filenamePattern: "basic",
+        isAudioOnly: true,
+        isTTFullAudio: true
+      })
+    }
+
+    const cobaltResponse = await fetch("https://api.cobalt.tools/api/json", initParams)
+    const cobaltData = await cobaltResponse.json()
+    if (cobaltData.status == "stream") {
+      const urlResponse = await fetch(cobaltData.url)
+      if (urlResponse.body instanceof ReadableStream) {
+        const reader = urlResponse.body.getReader()
+        const chunks : Uint8Array[] = []
+        let done: boolean | undefined;
+        let value: Uint8Array | undefined;
+
+        while ({ done, value } = await reader.read(), !done) {
+          if (value) {
+            chunks.push(value);
+          }
+        } 
+        const dataBlob = new Blob(chunks)
+        console.log(dataBlob.size)
+        setFileBlob(dataBlob)
+      } else {
+        console.log(urlResponse.body)
+        throw new Error ("Not a stream")
       }
-
-      fetch("https://api.cobalt.tools/api/json", initParams)
-        .then((response) => response.json())
-          .then(data => {
-            if (data.status == "stream") {
-              fetch(data.url).then((response) => {
-                if (response.body instanceof ReadableStream) {
-                  const reader = response.body.getReader()
-                  const chunks : Uint8Array[] = []
-
-                  reader.read().then(function pump ({done, value}) : Promise<ReadableStreamReadResult<Uint8Array>> {
-                    if (done) {
-                      const dataBlob = new Blob(chunks)
-                      console.log(dataBlob.size)
-                      setFileBlob(dataBlob)
-                      return
-                    }
-                    value && chunks.push(value)
-                    return reader.read().then(pump)
-                  })
-                } else {
-                  console.log("Not a stream", data)
-                }
-              })
-            } else {
-              console.log("Cobalt error", data.status, data?.text)
-            }
-          })
     } else {
-      console.log("Invalid URL")
+      throw new Error(`Cobalt error, ${cobaltData.status}, ${cobaltData.text}`)
     }
   }
 
@@ -79,7 +76,7 @@ const BrowserController: React.FC<BCProps> = ({slicesListState, highlightedSlice
     <>
       <input type="file" onChange={handleImportFile} accept="audio/*" />
       <input type="url" value={cobaltURL} onChange={urlValidation}></input>
-      <button onClick={handleCobalt}>Download</button>
+      <button onClick={async () => await handleColbaltAsync()}>Download</button>
       <Browser
         fileBlob={fileBlob}
         slicesListState={slicesListState}
