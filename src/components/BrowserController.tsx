@@ -1,6 +1,6 @@
 import Browser from "./Browser"
 import Slice from "../utils/Slice"
-import React from "react"
+import React, { ChangeEvent, useState } from "react"
 
 interface BCProps {
   slicesListState: [ Slice[] | [], React.Dispatch<React.SetStateAction<Slice[] | []>> ]
@@ -8,12 +8,23 @@ interface BCProps {
 }
 
 const BrowserController: React.FC<BCProps> = ({slicesListState, highlightedSliceState}) => {
+  const [ fileBlob, setFileBlob ] = useState<Blob | undefined>(undefined)
   
+  const handleImportFile = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      const file = event.target.files[0]
+      const blob = new Blob([file], { type: file.type });
+      fileBlob != blob && setFileBlob(blob);
+    }
+  }
+
   return (
     <>
+      <input type="file" onChange={handleImportFile} accept="audio/*" />
       <Browser
-         slicesListState={slicesListState}
-         highlightedSliceState={highlightedSliceState}
+        fileBlob={fileBlob}
+        slicesListState={slicesListState}
+        highlightedSliceState={highlightedSliceState}
       />
     </>
   )
