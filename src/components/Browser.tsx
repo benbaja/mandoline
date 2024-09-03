@@ -53,9 +53,11 @@ const Browser: React.FC<browserProps> = ({slicesListState, highlightedSliceState
   })
 
   useEffect(() => {
+    // Effect for new file blob to load
     regions.clearRegions()
     setSlicesList([])
     setHighlightedSlice(undefined)
+    setSliceIndex(1)
     wavesurfer?.setTime(0)
     fileBlob && wavesurfer?.loadBlob(fileBlob)
   }, [fileBlob])
