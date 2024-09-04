@@ -1,4 +1,6 @@
 import Browser from "./Browser"
+import BPMCounter from "./bpmCounter"
+import { Tempo } from "./bpmCounter"
 import Slice from "../utils/Slice"
 import React, { ChangeEvent, useEffect, useRef, useState } from "react"
 import RecordPlugin from "wavesurfer.js/dist/plugins/record.js"
@@ -12,10 +14,13 @@ const BrowserController: React.FC<BCProps> = ({slicesListState, highlightedSlice
   const [ fileBlob, setFileBlob ] = useState<Blob | undefined>(undefined)
   const [ cobaltURL, setCobaltURL ] = useState("")
   const [ isUrlValid, setIsUrlValid ] = useState(false)
+
   const [ isRecording, setIsRecording ] = useState(false)
   const recPlugin = useRef(RecordPlugin.create({renderRecordedAudio: true, scrollingWaveform: true}))
   const [ micDevices, setMicDevices ] = useState<{name: string, id: string}[]>([])
   const [ pickedMic, setPickedMic ] = useState<string>()
+
+  const [tempo, setTempo] = useState<Tempo | undefined>()
 
   useEffect(() => {
     navigator.permissions.query({ name: "microphone" as PermissionName }).then(permissionResult => {
@@ -122,6 +127,10 @@ const BrowserController: React.FC<BCProps> = ({slicesListState, highlightedSlice
           return <option value={device.id}>{device.name}</option>
         })}
       </select>
+      <BPMCounter 
+        tempoState={[tempo, setTempo]} 
+        fileBlob={fileBlob}
+      />
       <Browser
         fileBlob={fileBlob}
         slicesListState={slicesListState}
