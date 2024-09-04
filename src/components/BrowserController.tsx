@@ -1,6 +1,7 @@
 import Browser from "./Browser"
 import Slice from "../utils/Slice"
-import React, { ChangeEvent, useState } from "react"
+import React, { ChangeEvent, useEffect, useRef, useState } from "react"
+import RecordPlugin from "wavesurfer.js/dist/plugins/record.js"
 
 interface BCProps {
   slicesListState: [ Slice[] | [], React.Dispatch<React.SetStateAction<Slice[] | []>> ]
@@ -10,7 +11,31 @@ interface BCProps {
 const BrowserController: React.FC<BCProps> = ({slicesListState, highlightedSliceState}) => {
   const [ fileBlob, setFileBlob ] = useState<Blob | undefined>(undefined)
   const [ cobaltURL, setCobaltURL ] = useState("")
-  const [ isUrlValid, setisUrlValid ] = useState(false)
+  const [ isUrlValid, setIsUrlValid ] = useState(false)
+  const [ isRecording, setIsRecording ] = useState(false)
+  const recPlugin = useRef(RecordPlugin.create({renderRecordedAudio: true, scrollingWaveform: true}))
+  const [ micDevices, setMicDevices ] = useState<{name: string, id: string}[]>([])
+  const [ pickedMic, setPickedMic ] = useState<string>()
+
+  useEffect(() => {
+    navigator.permissions.query({ name: "microphone" as PermissionName }).then(permissionResult => {
+      console.log("Mic permission: ", permissionResult.state)
+      if (permissionResult.state != "granted") {
+        navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+      }
+    })
+    RecordPlugin.getAvailableAudioDevices().then(devices => {
+      const devicesList : {name: string, id: string}[] = []
+      devices.forEach(device => {
+        devicesList.push({name: device.label, id: device.deviceId})
+      })
+      setMicDevices(devicesList)
+    })
+    // cleanup
+    return () => {
+      setMicDevices([])
+    }
+  }, [])
 
   const handleImportFile = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -21,7 +46,7 @@ const BrowserController: React.FC<BCProps> = ({slicesListState, highlightedSlice
   }
 
   const urlValidation = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setisUrlValid(event.target.validity.valid)
+    setIsUrlValid(event.target.validity.valid)
     setCobaltURL(event.target.value)
   }
 
@@ -72,15 +97,36 @@ const BrowserController: React.FC<BCProps> = ({slicesListState, highlightedSlice
     }
   }
 
+  const handleMicChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    setPickedMic(event.target.value)
+  }
+
+  const handleRec = () => {
+    if (!isRecording) {
+      setIsRecording(true)
+      recPlugin.current.startRecording({ deviceId: pickedMic })
+    } else {
+      recPlugin.current.stopRecording()
+      setIsRecording(false)
+    }
+  }
+
   return (
     <>
       <input type="file" onChange={handleImportFile} accept="audio/*" />
       <input type="url" value={cobaltURL} onChange={urlValidation}></input>
       <button onClick={async () => await handleColbaltAsync()}>Download</button>
+      <button onClick={handleRec}>{isRecording ? "Stop" : "Rec"}</button>
+      <select onChange={handleMicChange}>
+        {micDevices.map(device => {
+          return <option value={device.id}>{device.name}</option>
+        })}
+      </select>
       <Browser
         fileBlob={fileBlob}
         slicesListState={slicesListState}
         highlightedSliceState={highlightedSliceState}
+        recPlugin={recPlugin}
       />
     </>
   )

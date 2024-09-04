@@ -6,11 +6,13 @@ import Regions from 'wavesurfer.js/dist/plugins/regions.esm.js'
 import Minimap from 'wavesurfer.js/dist/plugins/minimap.esm.js'
 import audioUrl from '../assets/audio.wav'
 import Slice from '../utils/Slice'
+import RecordPlugin from 'wavesurfer.js/dist/plugins/record.js'
 
 interface browserProps {
   slicesListState: [ Slice[] | [], React.Dispatch<React.SetStateAction<Slice[] | []>> ]
   highlightedSliceState: [ Slice | undefined, React.Dispatch<React.SetStateAction<Slice | undefined>> ]
   fileBlob: Blob | undefined
+  recPlugin: React.MutableRefObject<RecordPlugin>
 }
 
 const formatTime = (seconds: number) => [seconds / 60, seconds % 60].map((v) => `0${Math.floor(v)}`.slice(-2)).join(':')
@@ -26,7 +28,7 @@ const minimap = Minimap.create({
 })
 
 // A React component that will render wavesurfer
-const Browser: React.FC<browserProps> = ({slicesListState, highlightedSliceState, fileBlob}) => {
+const Browser: React.FC<browserProps> = ({slicesListState, highlightedSliceState, fileBlob, recPlugin}) => {
   const containerRef = useRef(null)
   const [ zoom, setZoom ] = useState(100)
   const [ onMouse, setOnMouse ] = useState(false)
@@ -49,7 +51,7 @@ const Browser: React.FC<browserProps> = ({slicesListState, highlightedSliceState
     autoCenter: true,
     autoScroll: true,
     sampleRate: 44100,
-    plugins: useMemo(() => [regions, timeline, minimap], []),
+    plugins: useMemo(() => [regions, timeline, minimap, recPlugin.current], []),
   })
 
   useEffect(() => {
