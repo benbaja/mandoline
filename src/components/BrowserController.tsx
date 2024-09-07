@@ -20,7 +20,7 @@ const BrowserController: React.FC<BCProps> = ({slicesListState, highlightedSlice
   const [ micDevices, setMicDevices ] = useState<{name: string, id: string}[]>([])
   const [ pickedMic, setPickedMic ] = useState<string>()
 
-  const [tempo, setTempo] = useState<Tempo | undefined>()
+  const [tempo, setTempo] = useState<Tempo>()
 
   useEffect(() => {
     navigator.permissions.query({ name: "microphone" as PermissionName }).then(permissionResult => {
@@ -133,6 +133,7 @@ const BrowserController: React.FC<BCProps> = ({slicesListState, highlightedSlice
       />
       <Browser
         fileBlob={fileBlob}
+        tempoState={[tempo, setTempo]} 
         slicesListState={slicesListState}
         highlightedSliceState={highlightedSliceState}
         recPlugin={recPlugin}
