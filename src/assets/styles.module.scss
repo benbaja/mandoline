@@ -1,6 +1,8 @@
 @font-face {
   font-family: "banquise";
   src: url("Banquise-Regular.woff");
+  text-rendering: optimizeLegibility;
+  font-weight: 100;
 }
 
 .slicesMenu {
@@ -13,11 +15,6 @@ width: 75%;
 
 .slicesList {
 width: 25%;
-}
-
-.ws {
-  overflow-x: scroll; 
-  width: 600px;
 }
 
 .mainWindow {

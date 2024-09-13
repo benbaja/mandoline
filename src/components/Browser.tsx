@@ -184,7 +184,6 @@ const Browser: React.FC<browserProps> = ({slicesListState, tempoState, highlight
     <>
       <div 
         ref={containerRef} 
-        style={{ overflowX: 'hidden', width: "580px"}} 
         onMouseEnter={() => setOnMouse(true)} 
         onMouseLeave={() => setOnMouse(false)}
         onMouseMove={handleMouseMove}
