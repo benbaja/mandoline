@@ -2,6 +2,9 @@ import { StrictMode, useState } from "react"
 import BrowserController from "./components/BrowserController"
 import SlicesMenu from "./components/SlicesMenu"
 import Slice from "./utils/Slice"
+import styles from "./assets/styles.module.scss"
+
+
 
 // A React component that will render wavesurfer
 const App = () => {
@@ -9,7 +12,7 @@ const App = () => {
   const [ slicesList, setSlicesList ] = useState<Slice[] | []>([])
 
   return (
-    <>
+    <div className={styles.mainWindow}>
       <StrictMode>
       <BrowserController
          slicesListState={[slicesList, setSlicesList]}
@@ -20,7 +23,7 @@ const App = () => {
          highlightedSliceState={[highlightedSlice, setHighlightedSlice]}
       />
       </StrictMode>
-    </>
+    </div>
   )
 }
 

@@ -2,6 +2,7 @@
 import { useState } from "react"
 import Slice from "../utils/Slice"
 import SliceWaveform from "./SliceWaveform"
+import styles from "../assets/styles.module.scss"
 
 interface SliceControllerProps {
   highlightedSliceState: [ Slice | undefined, React.Dispatch<React.SetStateAction<Slice | undefined>> ]
@@ -32,7 +33,7 @@ const SliceController: React.FC<SliceControllerProps> = ({highlightedSliceState}
   }
 
   return (
-    <>
+    <div className={styles.sliceController}>
       <button onClick={handlePlayPause}>{isPlaying ? "Pause" : "Play"}</button>
       <button onClick={handleLoop}>{highlightedSlice?.settings.isLooped ? "Looped" : "Loop"}</button>
       <button>Trim</button>
@@ -42,7 +43,7 @@ const SliceController: React.FC<SliceControllerProps> = ({highlightedSliceState}
         isPlayingState={[isPlaying, setIsPlaying]}
         isLooped={isLooped}
       />
-    </>
+    </div>
   )
 }
 

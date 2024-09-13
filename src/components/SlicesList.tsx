@@ -1,5 +1,6 @@
 import Slice from "../utils/Slice"
 import SliceIndex from "./SliceIndex"
+import styles from "../assets/styles.module.scss"
 
 interface SlicesListProps {
   slicesListState: [ Slice[] | [], React.Dispatch<React.SetStateAction<Slice[] | []>> ]
@@ -24,7 +25,7 @@ const SlicesList: React.FC<SlicesListProps> = ({slicesListState, highlightedSlic
   }
 
   return (
-    <>
+    <div className={styles.slicesList}>
       {slicesList.map((slice) => {
           return(
             <SliceIndex key={slice.region.id}
@@ -40,7 +41,7 @@ const SlicesList: React.FC<SlicesListProps> = ({slicesListState, highlightedSlic
           )
         })                            
       }
-    </>
+    </div>
   )
 }
 

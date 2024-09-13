@@ -1,6 +1,7 @@
 import SlicesList from "./SlicesList"
 import SliceController from "./SliceController"
 import Slice from "../utils/Slice"
+import styles from "../assets/styles.module.scss"
 
 interface SlicesMenuProps {
   slicesListState: [ Slice[] | [], React.Dispatch<React.SetStateAction<Slice[] | []>> ]
@@ -10,7 +11,7 @@ interface SlicesMenuProps {
 const SlicesMenu: React.FC<SlicesMenuProps> = ({slicesListState, highlightedSliceState}) => {
 
   return (
-    <>
+    <div className={styles.slicesMenu}>
       <SlicesList
         slicesListState={slicesListState}
         highlightedSliceState={highlightedSliceState}
@@ -18,7 +19,7 @@ const SlicesMenu: React.FC<SlicesMenuProps> = ({slicesListState, highlightedSlic
       <SliceController
         highlightedSliceState={highlightedSliceState} 
       />
-    </>
+    </div>
   )
 }
 

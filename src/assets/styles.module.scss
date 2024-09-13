@@ -1,0 +1,27 @@
+@font-face {
+  font-family: "banquise";
+  src: url("Banquise-Regular.woff");
+}
+
+.slicesMenu {
+  display: flex;
+}
+
+.sliceController {
+width: 75%;
+}
+
+.slicesList {
+width: 25%;
+}
+
+.ws {
+  overflow-x: scroll; 
+  width: 600px;
+}
+
+.mainWindow {
+  font-family: "banquise";
+  width: 70%;
+  margin: auto;
+}
