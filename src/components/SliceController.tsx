@@ -34,10 +34,19 @@ const SliceController: React.FC<SliceControllerProps> = ({highlightedSliceState}
 
   return (
     <div className={styles.sliceController}>
-      <button onClick={handlePlayPause}>{isPlaying ? "Pause" : "Play"}</button>
-      <button onClick={handleLoop}>{highlightedSlice?.settings.isLooped ? "Looped" : "Loop"}</button>
-      <button>Trim</button>
-      <button onClick={handleReverse}>{highlightedSlice?.settings.isReversed ? "=>" : "<="}</button>
+      <div className={styles.sliceControllerToolbar}>
+        <button onClick={handlePlayPause} disabled={highlightedSlice ? false : true}>
+          {isPlaying ? "Pause" : "Play"}
+        </button>
+        <button onClick={handleLoop} disabled={highlightedSlice ? false : true}>
+          {highlightedSlice?.settings.isLooped ? "Looped" : "Loop"}
+        </button>
+        <button onClick={handleReverse} disabled={highlightedSlice ? false : true}>
+          {highlightedSlice?.settings.isReversed ? "=>" : "<="}
+        </button>
+
+        <div className={styles.sliceControllerToolbarSpacer}></div>
+      </div>
       <SliceWaveform
         highlightedSliceState={highlightedSliceState} 
         isPlayingState={[isPlaying, setIsPlaying]}

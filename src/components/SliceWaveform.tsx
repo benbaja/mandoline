@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react"
 import Slice from "../utils/Slice"
 import { useWavesurfer } from "@wavesurfer/react"
+import styles from "../assets/styles.module.scss"
 
 interface SliceWaveformProps {
   highlightedSliceState: [ Slice | undefined, React.Dispatch<React.SetStateAction<Slice | undefined>> ]
@@ -15,7 +16,6 @@ const SliceWaveform: React.FC<SliceWaveformProps> = ({highlightedSliceState, isP
 
   const { wavesurfer } = useWavesurfer({
     container: containerRef,
-    height: 100,
     waveColor: 'rgb(0, 200, 200)',
     progressColor: 'rgb(100, 0, 100)',
     hideScrollbar: true,
@@ -55,7 +55,7 @@ const SliceWaveform: React.FC<SliceWaveformProps> = ({highlightedSliceState, isP
     <>
       <div 
         ref={containerRef} 
-        style={{ overflowX: 'hidden'}} 
+        className={styles.sliceWaveform}
       />
     </>
   )

@@ -5,10 +5,6 @@
   font-weight: 100;
 }
 
-.slicesMenu {
-  display: flex;
-}
-
 .title {
   font-family: "banquise";
   text-align: center;
@@ -16,20 +12,22 @@
 
 .mainWindow {
   font-family: "banquise";
-  width: 70%;
+  width: 1000px;
   margin: auto;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
 }
 
 // Browser controller
 
 .browserController {
   display: block;
+  border: 1px solid black
 }
 
 .browserToolbar {
   display: flex;
   justify-content: space-between;
-  border: 1px solid black;
+  border-bottom: 1px solid black;
 }
 
 .bcToolbarLeft {
@@ -46,9 +44,7 @@
 
 // browser
 
-.browser {
-  border: 1px solid black;
-}
+.browser
 
 // Audio Source dropdown
 
@@ -60,8 +56,7 @@
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
 }
 
-.asDropdown {
-}
+.asDropdown 
 
 // Settings panel
 
@@ -91,16 +86,17 @@
   position:fixed;
 }
 
-.sliceController {
-  width: 75%;
-}
+// SLICES
 
+.slicesMenu {
+  display: flex;
+  height: 15em;
+}
 
 // Slices list
 
 .slicesListContainer {
   width: 25%;
-  height: 15em;
   overflow-y: scroll;
   scrollbar-width: 10px;
   border-left: 1px solid black;
@@ -138,4 +134,25 @@
 
 .highlightedSlice {
   background-color: gray;
+}
+
+// Slice controller
+.sliceController {
+  width: 75%;
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+.sliceControllerToolbar {
+  border-bottom: 1px solid black;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.sliceControllerToolbarSpacer {
+  width: 70%;
+}
+
+.sliceWaveform {
+  overflow-x: 'hidden';
 }
