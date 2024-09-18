@@ -22,6 +22,7 @@ const SliceWaveform: React.FC<SliceWaveformProps> = ({highlightedSliceState, isP
     dragToSeek: true,
     autoCenter: true,
     autoScroll: true,
+    fillParent: true
   })
 
   useEffect(() => {
@@ -54,7 +55,7 @@ const SliceWaveform: React.FC<SliceWaveformProps> = ({highlightedSliceState, isP
     <>
       <div 
         ref={containerRef} 
-        style={{ overflowX: 'hidden', width: "580px"}} 
+        style={{ overflowX: 'hidden'}} 
       />
     </>
   )

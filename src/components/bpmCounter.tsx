@@ -28,10 +28,10 @@ const bpmCounter: React.FC<bpmProps> = ({tempoState, fileBlob}) => {
     }
 
     return (
-        <>
+        <div>
             <input type="number" min={0} max={999} value={tempo?.bpm} onChange={(event) => setTempo({bpm: event.target.valueAsNumber, offset:tempo?.offset})}></input>
             <button onClick={async () => await detectBPM()}>Detect</button>
-        </>
+        </div>
     )
 }
 

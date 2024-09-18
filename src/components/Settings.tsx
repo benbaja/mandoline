@@ -1,13 +1,16 @@
 import React, { ChangeEvent, useEffect, useState } from "react"
 import RecordPlugin from "wavesurfer.js/dist/plugins/record.js"
+import styles from "../assets/styles.module.scss"
 
 interface SettingsProps {
     pickedMicState: [ string | undefined, React.Dispatch<React.SetStateAction<string | undefined>> ]
+    showState: [ boolean, React.Dispatch<React.SetStateAction<boolean>> ]
 }
 
-const Settings: React.FC<SettingsProps> = ({pickedMicState}) => {
+const Settings: React.FC<SettingsProps> = ({pickedMicState, showState}) => {
     const [ micDevices, setMicDevices ] = useState<{name: string, id: string}[]>([])
     const [ pickedMic, setPickedMic ] = pickedMicState
+    const [ show, setShow ] = showState
 
     useEffect(() => {
         navigator.permissions.query({ name: "microphone" as PermissionName }).then(permissionResult => {
@@ -34,13 +37,18 @@ const Settings: React.FC<SettingsProps> = ({pickedMicState}) => {
     }
 
     return (
-        <div>
+        <div className={styles.settingsPanel} style={{display: show ? "inline-block" : "none"}}>
+            <div className={styles.settingsHeader}>
+              Settings
+              <button onClick={() => setShow(false)}>X</button>
+            </div>
+            <label>Microphone:   </label>
             <select onChange={handleMicChange} value={pickedMic}>
                 {micDevices.map(device => {
-                    return <option value={device.id}>{device.name}</option>
+                    return <option value={device.id} key={device.id}>{device.name}</option>
                 }
             )}
-      </select>
+            </select>
         </div>
     )
 }

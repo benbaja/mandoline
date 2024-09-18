@@ -1,13 +1,15 @@
 import React, { ChangeEvent, useState } from "react"
 import RecordPlugin from "wavesurfer.js/dist/plugins/record.js"
+import styles from "../assets/styles.module.scss"
 
 interface ASProps {
     fileBlobState: [ Blob | undefined, React.Dispatch<React.SetStateAction<Blob | undefined>> ]
     recPlugin: React.MutableRefObject<RecordPlugin>
     pickedMic: string | undefined
+    show: boolean
 }
 
-const AudioSource: React.FC<ASProps> = ({fileBlobState, recPlugin, pickedMic}) => {
+const AudioSource: React.FC<ASProps> = ({fileBlobState, recPlugin, pickedMic, show}) => {
     const [fileBlob, setFileBlob] = fileBlobState
     const [ cobaltURL, setCobaltURL ] = useState("")
     const [ isUrlValid, setIsUrlValid ] = useState(false)
@@ -84,11 +86,22 @@ const AudioSource: React.FC<ASProps> = ({fileBlobState, recPlugin, pickedMic}) =
       }
 
     return (
-        <div>
-            <input type="file" onChange={handleImportFile} accept="audio/*" />
-            <input type="url" value={cobaltURL} onChange={urlValidation}></input>
-            <button onClick={async () => await handleColbaltAsync()}>Download</button>
-            <button onClick={handleRec}>{isRecording ? "Stop" : "Rec"}</button>
+        <div className={styles.asDropdownContent} style={{display: show ? "block" : "none"}}>
+            <ul>
+              <li>
+                <label>Import file  </label>
+                <input type="file" onChange={handleImportFile} accept="audio/*" />
+              </li>
+              <li>
+                <label>Download audio </label>
+                <input type="url" value={cobaltURL} onChange={urlValidation}></input>
+                <button onClick={async () => await handleColbaltAsync()}>Download</button>
+              </li>
+              <li>
+                <label>Record </label>
+                <button onClick={handleRec}>{isRecording ? "Stop" : "Start"}</button>
+              </li>
+            </ul>
         </div>
     )
 }

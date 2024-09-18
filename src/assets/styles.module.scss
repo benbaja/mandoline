@@ -22,3 +22,40 @@ width: 25%;
   width: 70%;
   margin: auto;
 }
+
+// Audio Source dropdown
+
+.asDropdownContent {
+  position: absolute;
+  background-color: white;
+  z-index: 10;
+}
+
+.asDropdown {
+  float: left;
+}
+
+// Settings panel
+
+.settingsPanel {
+  text-align: center;
+  position: fixed;
+  top:25%;
+  background-color: white;
+  display: inline-block;
+  z-index: 30;
+  padding: 2em;
+}
+
+.settingsHeader {
+  padding-bottom: 1em;
+}
+
+.settingsHeader button {
+  position: absolute;
+  left: 90%;
+}
+
+.settingsBg {
+  position:fixed;
+}
