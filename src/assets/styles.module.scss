@@ -17,10 +17,38 @@ width: 75%;
 width: 25%;
 }
 
+.title {
+  font-family: "banquise";
+  text-align: center;
+}
+
 .mainWindow {
   font-family: "banquise";
   width: 70%;
   margin: auto;
+}
+
+// Browser controller
+
+.browserController {
+  display: block;
+}
+
+.browserToolbar {
+  display: flex;
+  justify-content: space-between;
+}
+
+.bcToolbarLeft {
+  width: 75%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.bcToolbarRight {
+  width: 20%;
+  display: flex;
+  justify-content: space-between
 }
 
 // Audio Source dropdown
@@ -32,7 +60,6 @@ width: 25%;
 }
 
 .asDropdown {
-  float: left;
 }
 
 // Settings panel

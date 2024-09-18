@@ -1,5 +1,5 @@
 import * as React from 'react'
-const { useMemo, useCallback, useRef, useEffect, useState } = React
+const { useMemo, useRef, useEffect, useState } = React
 import { useWavesurfer } from '@wavesurfer/react'
 import Timeline from 'wavesurfer.js/dist/plugins/timeline.esm.js'
 import Regions from 'wavesurfer.js/dist/plugins/regions.esm.js'
@@ -12,13 +12,14 @@ import TimelinePlugin from 'wavesurfer.js/dist/plugins/timeline.esm.js'
 
 interface browserProps {
   slicesListState: [ Slice[] | [], React.Dispatch<React.SetStateAction<Slice[] | []>> ]
+  isPlayingState: [ boolean, React.Dispatch<React.SetStateAction<boolean>> ]
+  timeState: [ number, React.Dispatch<React.SetStateAction<number>> ]
+  zoomState: [ number, React.Dispatch<React.SetStateAction<number>> ]
   tempoState: [ Tempo | undefined, React.Dispatch<React.SetStateAction<Tempo | undefined>> ]
   highlightedSliceState: [ Slice | undefined, React.Dispatch<React.SetStateAction<Slice | undefined>> ]
   fileBlob: Blob | undefined
   recPlugin: React.MutableRefObject<RecordPlugin>
 }
-
-const formatTime = (seconds: number) => [seconds / 60, seconds % 60].map((v) => `0${Math.floor(v)}`.slice(-2)).join(':')
 
 const regions = Regions.create()
 const timeline = Timeline.create()
@@ -31,16 +32,23 @@ const minimap = Minimap.create({
 })
 
 // A React component that will render wavesurfer
-const Browser: React.FC<browserProps> = ({slicesListState, tempoState, highlightedSliceState, fileBlob, recPlugin}) => {
+const Browser: React.FC<browserProps> = ({
+  slicesListState, tempoState, isPlayingState, timeState, zoomState, highlightedSliceState, fileBlob, recPlugin
+}) => {
   const containerRef = useRef(null)
-  const [ zoom, setZoom ] = useState(100)
+
+  const [ tempo, setTempo ] = tempoState
+  const [ zoom, setZoom ] = zoomState
+  const [ isPlaying, setIsPlaying] = isPlayingState
+  const [ time, setTime ] = timeState
+
   const [ onMouse, setOnMouse ] = useState(false)
   const [ mousePos, setMousePos ] = useState({x: 0, y: 0})
   const [ firstMarkerTime, setFirstMarkerTime ] = useState(0)
   const [ highlightedSlice, setHighlightedSlice ] = highlightedSliceState
   const [ slicesList, setSlicesList ] = slicesListState
   const [ sliceIndex, setSliceIndex ] = useState(1)
-  const [ tempo, setTempo ] = tempoState
+
   let browserBuffer : AudioBuffer | null = null
   const bpmTimeline = useRef<TimelinePlugin>()
 
@@ -52,7 +60,7 @@ const Browser: React.FC<browserProps> = ({slicesListState, tempoState, highlight
     return () => bpmTimeline.current && bpmTimeline.current.destroy()
   }, [tempo?.bpm])
 
-  const { wavesurfer, isPlaying, currentTime } = useWavesurfer({
+  const { wavesurfer, currentTime } = useWavesurfer({
     container: containerRef,
     height: 100,
     waveColor: 'rgb(200, 0, 200)',
@@ -168,17 +176,20 @@ const Browser: React.FC<browserProps> = ({slicesListState, tempoState, highlight
     }
   }
 
-  const onPlayPause = useCallback(() => {
-    wavesurfer && wavesurfer.playPause()
-  }, [wavesurfer])
+  // sync play state with ws
+  useEffect(() => {
+    isPlaying ? wavesurfer?.play() : wavesurfer?.pause()
+  }, [isPlaying])
 
-  const onZoom = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const zoomLevel = event.target.valueAsNumber
-    setZoom(zoomLevel)
+  // sync zoom state with ws
+  useEffect(() => {
     if (wavesurfer?.getDecodedData()) {
-      wavesurfer.zoom(zoomLevel)
+      wavesurfer.zoom(zoom)
     }
-  }
+  }, [zoom])
+
+  // sync currentTime with controller
+  useEffect(() => setTime(currentTime), [currentTime])
 
   return (
     <>
@@ -188,17 +199,6 @@ const Browser: React.FC<browserProps> = ({slicesListState, tempoState, highlight
         onMouseLeave={() => setOnMouse(false)}
         onMouseMove={handleMouseMove}
       />
-
-      <input type="range" min="10" max="2000" value={zoom} onChange={onZoom} />
-
-      <p>Current time: {formatTime(currentTime)}</p>
-
-      <div style={{ margin: '1em 0', display: 'flex', gap: '1em' }}>
-
-        <button onClick={onPlayPause} style={{ minWidth: '5em' }}>
-          {isPlaying ? 'Pause' : 'Play'}
-        </button>
-      </div>
     </>
   )
 }

@@ -12,18 +12,21 @@ const App = () => {
   const [ slicesList, setSlicesList ] = useState<Slice[] | []>([])
 
   return (
-    <div className={styles.mainWindow}>
+    <>
       <StrictMode>
-      <BrowserController
-         slicesListState={[slicesList, setSlicesList]}
-         highlightedSliceState={[highlightedSlice, setHighlightedSlice]}
-      />
-      <SlicesMenu
-         slicesListState={[slicesList, setSlicesList]}
-         highlightedSliceState={[highlightedSlice, setHighlightedSlice]}
-      />
+        <h1 className={styles.title}>mandoline</h1>
+        <div className={styles.mainWindow}>
+          <BrowserController
+             slicesListState={[slicesList, setSlicesList]}
+             highlightedSliceState={[highlightedSlice, setHighlightedSlice]}
+          />
+          <SlicesMenu
+             slicesListState={[slicesList, setSlicesList]}
+             highlightedSliceState={[highlightedSlice, setHighlightedSlice]}
+          />
+        </div>
       </StrictMode>
-    </div>
+    </>
   )
 }
 
