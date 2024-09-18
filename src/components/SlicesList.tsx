@@ -25,22 +25,29 @@ const SlicesList: React.FC<SlicesListProps> = ({slicesListState, highlightedSlic
   }
 
   return (
-    <div className={styles.slicesList}>
-      {slicesList.map((slice) => {
-          return(
-            <SliceIndex key={slice.region.id}
-                        slice={slice} 
-                        highlightSlice={highlightSlice}
-                        deleteSlice={deleteSlice}
-                        isHighlighted={
-                          highlightedSlice 
-                          ? slice.region.id == highlightedSlice.region.id 
-                          : false
-                        }
-            />
-          )
-        })                            
-      }
+    <div className={styles.slicesListContainer}>
+      <div className={styles.slicesListHeader}>
+        Slices 
+        <button>Delete all</button>
+        <button>Download all</button>
+      </div>
+      <div className={styles.slicesList}>
+        {slicesList.map((slice) => {
+            return(
+              <SliceIndex key={slice.region.id}
+                          slice={slice} 
+                          highlightSlice={highlightSlice}
+                          deleteSlice={deleteSlice}
+                          isHighlighted={
+                            highlightedSlice 
+                            ? slice.region.id == highlightedSlice.region.id 
+                            : false
+                          }
+              />
+            )
+          })                            
+        }
+      </div>
     </div>
   )
 }

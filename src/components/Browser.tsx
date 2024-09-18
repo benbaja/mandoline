@@ -9,6 +9,7 @@ import Slice from '../utils/Slice'
 import { Tempo } from './bpmCounter'
 import RecordPlugin from 'wavesurfer.js/dist/plugins/record.js'
 import TimelinePlugin from 'wavesurfer.js/dist/plugins/timeline.esm.js'
+import styles from "../assets/styles.module.scss"
 
 interface browserProps {
   slicesListState: [ Slice[] | [], React.Dispatch<React.SetStateAction<Slice[] | []>> ]
@@ -195,6 +196,7 @@ const Browser: React.FC<browserProps> = ({
     <>
       <div 
         ref={containerRef} 
+        className={styles.browser}
         onMouseEnter={() => setOnMouse(true)} 
         onMouseLeave={() => setOnMouse(false)}
         onMouseMove={handleMouseMove}

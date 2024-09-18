@@ -9,14 +9,6 @@
   display: flex;
 }
 
-.sliceController {
-width: 75%;
-}
-
-.slicesList {
-width: 25%;
-}
-
 .title {
   font-family: "banquise";
   text-align: center;
@@ -37,6 +29,7 @@ width: 25%;
 .browserToolbar {
   display: flex;
   justify-content: space-between;
+  border: 1px solid black;
 }
 
 .bcToolbarLeft {
@@ -51,12 +44,20 @@ width: 25%;
   justify-content: space-between
 }
 
+// browser
+
+.browser {
+  border: 1px solid black;
+}
+
 // Audio Source dropdown
 
 .asDropdownContent {
   position: absolute;
   background-color: white;
   z-index: 10;
+  border: 1px solid black;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
 }
 
 .asDropdown {
@@ -68,10 +69,13 @@ width: 25%;
   text-align: center;
   position: fixed;
   top:25%;
+  transform: translateX(-120%);
   background-color: white;
   display: inline-block;
   z-index: 30;
   padding: 2em;
+  border: 1px solid black;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
 }
 
 .settingsHeader {
@@ -85,4 +89,53 @@ width: 25%;
 
 .settingsBg {
   position:fixed;
+}
+
+.sliceController {
+  width: 75%;
+}
+
+
+// Slices list
+
+.slicesListContainer {
+  width: 25%;
+  height: 15em;
+  overflow-y: scroll;
+  scrollbar-width: 10px;
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+
+.slicesListHeader {
+  border-bottom: 1px solid black;
+  display: flex;
+  position: sticky;
+  top: 0%;
+  background-color: white;
+  justify-content: space-evenly
+}
+
+.sliceIndex {
+  padding: 2px;
+  border-bottom: 1px solid black;
+  display: flex;
+}
+
+.sliceIndexButtons {
+  width: 25%;
+  display: grid;
+  padding-left: 1em;
+  padding-right: 1em;
+}
+
+.sliceIndexInfo {
+  width: 75%;
+  display: grid;
+}
+
+.highlightedSlice {
+  background-color: gray;
 }
