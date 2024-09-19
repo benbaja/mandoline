@@ -66,10 +66,10 @@ const BrowserController: React.FC<BCProps> = ({slicesListState, highlightedSlice
       </div>
       <Browser
         fileBlob={fileBlob}
-        tempoState={[tempo, setTempo]} 
-        isPlayingState={[ isPlaying, setIsPlaying]}
-        timeState={[ time, setTime ]}
-        zoomState={[ zoom, setZoom ]}
+        tempo={tempo} 
+        isPlaying={isPlaying}
+        setTime={setTime}
+        zoom={zoom}
         slicesListState={slicesListState}
         highlightedSliceState={highlightedSliceState}
         recPlugin={recPlugin}

@@ -13,10 +13,10 @@ import styles from "../assets/styles.module.scss"
 
 interface browserProps {
   slicesListState: [ Slice[] | [], React.Dispatch<React.SetStateAction<Slice[] | []>> ]
-  isPlayingState: [ boolean, React.Dispatch<React.SetStateAction<boolean>> ]
-  timeState: [ number, React.Dispatch<React.SetStateAction<number>> ]
-  zoomState: [ number, React.Dispatch<React.SetStateAction<number>> ]
-  tempoState: [ Tempo | undefined, React.Dispatch<React.SetStateAction<Tempo | undefined>> ]
+  isPlaying: boolean
+  setTime: React.Dispatch<React.SetStateAction<number>>
+  zoom: number
+  tempo: Tempo | undefined
   highlightedSliceState: [ Slice | undefined, React.Dispatch<React.SetStateAction<Slice | undefined>> ]
   fileBlob: Blob | undefined
   recPlugin: React.MutableRefObject<RecordPlugin>
@@ -34,14 +34,9 @@ const minimap = Minimap.create({
 
 // A React component that will render wavesurfer
 const Browser: React.FC<browserProps> = ({
-  slicesListState, tempoState, isPlayingState, timeState, zoomState, highlightedSliceState, fileBlob, recPlugin
+  slicesListState, tempo, isPlaying, setTime, zoom, highlightedSliceState, fileBlob, recPlugin
 }) => {
   const containerRef = useRef(null)
-
-  const [ tempo, setTempo ] = tempoState
-  const [ zoom, setZoom ] = zoomState
-  const [ isPlaying, setIsPlaying] = isPlayingState
-  const [ time, setTime ] = timeState
 
   const [ onMouse, setOnMouse ] = useState(false)
   const [ mousePos, setMousePos ] = useState({x: 0, y: 0})
