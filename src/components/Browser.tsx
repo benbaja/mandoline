@@ -166,11 +166,11 @@ const Browser: React.FC<browserProps> = ({
   })
 )
   const handleMouseMove = (event: React.MouseEvent<HTMLElement>) => {
-    setMousePos({x: event.clientX, y: event.clientY})
+    setMousePos({x: event.nativeEvent.offsetX, y: event.nativeEvent.offsetY})
     
     if (highlightedSlice && highlightedSlice.isBeingCreated) {
       // handle end section of region
-      const mouseOverTime = xToSec(event.clientX)
+      const mouseOverTime = xToSec(event.nativeEvent.offsetX)
       const sliceStart = firstMarkerTime
       const regionOptions = mouseOverTime > sliceStart ? {start: sliceStart, end: mouseOverTime} : {start: mouseOverTime, end: sliceStart}
       highlightedSlice.region.setOptions(regionOptions)
