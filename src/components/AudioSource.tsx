@@ -41,16 +41,16 @@ const AudioSource: React.FC<ASProps> = ({fileBlobState, recPlugin, pickedMic, sh
           },
           body: JSON.stringify({
             url: contentURL,
-            aFormat: "best",
-            filenamePattern: "basic",
-            isAudioOnly: true,
-            isTTFullAudio: true
+            audioFormat: "best",
+            filenameStyle: "basic",
+            downloadMode: "audio",
+            tiktokFullAudio: true
           })
         }
     
-        const cobaltResponse = await fetch("https://api.cobalt.tools/api/json", initParams)
+        const cobaltResponse = await fetch("https://api.cobalt.tools/", initParams)
         const cobaltData = await cobaltResponse.json()
-        if (cobaltData.status == "stream") {
+        if (cobaltData.status != "error") {
           const urlResponse = await fetch(cobaltData.url)
           if (urlResponse.body instanceof ReadableStream) {
             const reader = urlResponse.body.getReader()
@@ -71,7 +71,7 @@ const AudioSource: React.FC<ASProps> = ({fileBlobState, recPlugin, pickedMic, sh
             throw new Error ("Not a stream")
           }
         } else {
-          throw new Error(`Cobalt error, ${cobaltData.status}, ${cobaltData.text}`)
+          throw new Error(`Cobalt error, ${cobaltData.error.code}, ${cobaltData.error.context}`)
         }
     }
 
