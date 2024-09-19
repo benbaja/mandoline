@@ -13,6 +13,7 @@ class Slice {
     public settings: sliceSettings
     private sliceBuffer: AudioBuffer | undefined
     public sliceBlob: Blob | undefined
+    public downloadUrl: string
     public isBeingCreated: boolean
 
 
@@ -26,6 +27,7 @@ class Slice {
         }
         this.sliceBuffer = undefined
         this.sliceBlob = undefined
+        this.downloadUrl = ''
     }
 
     public setBuffer(browserBuffer: AudioBuffer | null): void {
@@ -37,6 +39,7 @@ class Slice {
             } else {
                 // blob generation already handled in the reverse method, maybe find a more elegant solution...
                 this.sliceBlob = new Blob([encodeWavFileFromAudioBuffer(this.sliceBuffer, 1)], {type: "audio/wav"})
+                this.downloadUrl = URL.createObjectURL(this.sliceBlob)
             }
         }
     }
@@ -72,6 +75,7 @@ class Slice {
             }
             this.sliceBuffer = revBuffer
             this.sliceBlob = new Blob([encodeWavFileFromAudioBuffer(revBuffer, 1)], {type: "audio/wav"})
+            this.downloadUrl = URL.createObjectURL(this.sliceBlob)
         }
     }
 
