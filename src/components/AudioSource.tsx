@@ -86,20 +86,20 @@ const AudioSource: React.FC<ASProps> = ({fileBlobState, recPlugin, pickedMic, sh
       }
 
     return (
-        <div className={styles.asDropdownContent} style={{display: show ? "block" : "none"}}>
+        <div className={styles.asDropdownContent} style={{display: show ? "block" : "none"}} data-cy="asList">
             <ul>
               <li>
                 <label>Import file  </label>
-                <input type="file" onChange={handleImportFile} accept="audio/*" />
+                <input type="file" onChange={handleImportFile} accept="audio/*" data-cy="asFileInput"/>
               </li>
               <li>
                 <label>Download audio </label>
-                <input type="url" value={cobaltURL} onChange={urlValidation}></input>
-                <button onClick={async () => await handleColbaltAsync()}>Download</button>
+                <input type="url" value={cobaltURL} onChange={urlValidation} data-cy="asURLInput"></input>
+                <button onClick={async () => await handleColbaltAsync()} data-cy="asURLButton">Download</button>
               </li>
               <li>
                 <label>Record </label>
-                <button onClick={handleRec}>{isRecording ? "Stop" : "Start"}</button>
+                <button onClick={handleRec} data-cy="asRecButton">{isRecording ? "Stop" : "Start"}</button>
               </li>
             </ul>
         </div>

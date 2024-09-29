@@ -30,26 +30,27 @@ const BrowserController: React.FC<BCProps> = ({slicesListState, highlightedSlice
 
   return (
     <div className={styles.browserController}>
-      <div className={styles.browserToolbar}>
-        <div className={styles.bcToolbarLeft}>
-          <button onClick={() => setIsPlaying(!isPlaying)}>
+      <div className={styles.browserToolbar} data-cy="browserToolbar">
+        <div className={styles.bcToolbarLeft} data-cy="bcToolbarLeft">
+          <button data-cy="bcPlayPause" onClick={() => setIsPlaying(!isPlaying)}>
               {isPlaying ? 'Pause' : 'Play'}
           </button>
 
-          <div>current time: {formatTime(time)}</div>
+          <div data-cy="bcCurrentTime">current time: {formatTime(time)}</div>
 
           <label>zoom: </label>
-          <input type="range" min="10" max="2000" value={zoom} onChange={(e) => setZoom(e.target.valueAsNumber)} />
+          <input type="range" data-cy="bcZoom" min="10" max="2000" value={zoom} onChange={(e) => setZoom(e.target.valueAsNumber)} />
 
           <BPMCounter 
             tempoState={[tempo, setTempo]} 
             fileBlob={fileBlob}
+            data-cy="bcBPMCounter"
           />
         </div>
 
-        <div className={styles.bcToolbarRight}>
+        <div className={styles.bcToolbarRight} data-cy="bcToolbarRight">
           <div className={styles.asDropdown}>
-            <button onClick={() => setShowAudioSource(!showAudioSource)}>Audio Source</button>
+            <button onClick={() => setShowAudioSource(!showAudioSource)} data-cy="asButton">Audio Source</button>
             <AudioSource 
               fileBlobState={[ fileBlob, setFileBlob ]} 
               recPlugin={recPlugin} 
@@ -57,7 +58,7 @@ const BrowserController: React.FC<BCProps> = ({slicesListState, highlightedSlice
               show={showAudioSource}
             />
           </div>
-          <button onClick={() => setShowSettings(!showSettings)}>Settings</button>
+          <button onClick={() => setShowSettings(!showSettings)} data-cy="settingsButton">Settings</button>
           <Settings 
             pickedMicState = {[ pickedMic, setPickedMic ]}
             showState={[ showSettings, setShowSettings ]}

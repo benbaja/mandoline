@@ -37,13 +37,13 @@ const Settings: React.FC<SettingsProps> = ({pickedMicState, showState}) => {
     }
 
     return (
-        <div className={styles.settingsPanel} style={{display: show ? "inline-block" : "none"}}>
+        <div className={styles.settingsPanel} style={{display: show ? "inline-block" : "none"}} data-cy="settingsPanel">
             <div className={styles.settingsHeader}>
               Settings
-              <button onClick={() => setShow(false)}>X</button>
+              <button onClick={() => setShow(false)} data-cy="sCloseBtn">X</button>
             </div>
             <label>Microphone:   </label>
-            <select onChange={handleMicChange} value={pickedMic}>
+            <select onChange={handleMicChange} value={pickedMic} data-cy="sMicOptions">
                 {micDevices.map(device => {
                     return <option value={device.id} key={device.id}>{device.name}</option>
                 }
