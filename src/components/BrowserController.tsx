@@ -23,8 +23,9 @@ const BrowserController: React.FC<BCProps> = ({slicesListState, highlightedSlice
   const [ showAudioSource, setShowAudioSource ] = useState(false)
   const [ showSettings, setShowSettings ] = useState(false)
 
-  const [ isPlaying, setIsPlaying] = useState(false)
-  const [ time, setTime ] = useState(0)
+  const [ playPauseBtn, setPlayPauseBtn] = useState(false)
+  const [ currentTime, setCurrentTime ] = useState(0)
+  const [ totalTime, setTotalTime ] = useState(0)
   const [ zoom, setZoom ] = useState(100)
   const [ tempo, setTempo ] = useState<Tempo>()
 
@@ -32,11 +33,11 @@ const BrowserController: React.FC<BCProps> = ({slicesListState, highlightedSlice
     <div className={styles.browserController}>
       <div className={styles.browserToolbar} data-cy="browserToolbar">
         <div className={styles.bcToolbarLeft} data-cy="bcToolbarLeft">
-          <button data-cy="bcPlayPause" onClick={() => setIsPlaying(!isPlaying)}>
-              {isPlaying ? 'Pause' : 'Play'}
+          <button data-cy="bcPlayPause" onClick={() => setPlayPauseBtn(!playPauseBtn)}>
+              {playPauseBtn ? 'Pause' : 'Play'}
           </button>
 
-          <div data-cy="bcCurrentTime">current time: {formatTime(time)}</div>
+          <div data-cy="bcCurrentTime">{formatTime(currentTime)} / {formatTime(totalTime)}</div>
 
           <label>zoom: </label>
           <input type="range" data-cy="bcZoom" min="10" max="2000" value={zoom} onChange={(e) => setZoom(e.target.valueAsNumber)} />
@@ -68,8 +69,9 @@ const BrowserController: React.FC<BCProps> = ({slicesListState, highlightedSlice
       <Browser
         fileBlob={fileBlob}
         tempo={tempo} 
-        isPlaying={isPlaying}
-        setTime={setTime}
+        playPauseBtnState={[playPauseBtn, setPlayPauseBtn]}
+        setCurrentTime={setCurrentTime}
+        setTotalTime={setTotalTime}
         zoom={zoom}
         slicesListState={slicesListState}
         highlightedSliceState={highlightedSliceState}

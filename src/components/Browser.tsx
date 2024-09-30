@@ -13,8 +13,9 @@ import styles from "../assets/styles.module.scss"
 
 interface browserProps {
   slicesListState: [ Slice[] | [], React.Dispatch<React.SetStateAction<Slice[] | []>> ]
-  isPlaying: boolean
-  setTime: React.Dispatch<React.SetStateAction<number>>
+  playPauseBtnState: [ boolean, React.Dispatch<React.SetStateAction<boolean>> ]
+  setCurrentTime: React.Dispatch<React.SetStateAction<number>>
+  setTotalTime: React.Dispatch<React.SetStateAction<number>>
   zoom: number
   tempo: Tempo | undefined
   highlightedSliceState: [ Slice | undefined, React.Dispatch<React.SetStateAction<Slice | undefined>> ]
@@ -23,18 +24,10 @@ interface browserProps {
 }
 
 const regions = Regions.create()
-const timeline = Timeline.create()
-const minimap = Minimap.create({
-  height: 20,
-  waveColor: '#ddd',
-  progressColor: '#999',
-  dragToSeek: {debounceTime: 0.01},
-  // the Minimap takes all the same options as the WaveSurfer itself
-})
 
 // A React component that will render wavesurfer
 const Browser: React.FC<browserProps> = ({
-  slicesListState, tempo, isPlaying, setTime, zoom, highlightedSliceState, fileBlob, recPlugin
+  slicesListState, tempo, playPauseBtnState, setCurrentTime, setTotalTime, zoom, highlightedSliceState, fileBlob, recPlugin
 }) => {
   const containerRef = useRef(null)
 
@@ -44,6 +37,8 @@ const Browser: React.FC<browserProps> = ({
   const [ highlightedSlice, setHighlightedSlice ] = highlightedSliceState
   const [ slicesList, setSlicesList ] = slicesListState
   const [ sliceIndex, setSliceIndex ] = useState(1)
+
+  const [playPauseBtn, setPlayPauseBtn] = playPauseBtnState
 
   let browserBuffer : AudioBuffer | null = null
   const bpmTimeline = useRef<TimelinePlugin>()
@@ -69,11 +64,25 @@ const Browser: React.FC<browserProps> = ({
     autoScroll: true,
     sampleRate: 44100,
     plugins: useMemo(() => {
-      const basePlugins = [regions, timeline, minimap, recPlugin.current]
+      const basePlugins = [
+        regions, 
+        Timeline.create(), 
+        Minimap.create({
+          height: 20,
+          waveColor: '#ddd',
+          progressColor: '#999',
+          dragToSeek: {debounceTime: 0.01},
+        }), 
+        recPlugin.current
+      ]
       bpmTimeline.current && basePlugins.push(bpmTimeline.current)
       return basePlugins
     }, []),
   })
+
+  useEffect(() => {
+    wavesurfer?.on("finish", () => setPlayPauseBtn(false))
+  }, [wavesurfer])
 
   useEffect(() => {
     // Effect for new file blob to load
@@ -83,6 +92,9 @@ const Browser: React.FC<browserProps> = ({
     setSliceIndex(1)
     wavesurfer?.setTime(0)
     fileBlob && wavesurfer?.loadBlob(fileBlob)
+    wavesurfer?.once("ready", () => {
+      wavesurfer.getDuration() && setTotalTime(wavesurfer.getDuration())
+    })
   }, [fileBlob])
 
   useEffect(() => {
@@ -174,8 +186,8 @@ const Browser: React.FC<browserProps> = ({
 
   // sync play state with ws
   useEffect(() => {
-    isPlaying ? wavesurfer?.play() : wavesurfer?.pause()
-  }, [isPlaying])
+    playPauseBtn ? wavesurfer?.play() : wavesurfer?.pause()
+  }, [playPauseBtn])
 
   // sync zoom state with ws
   useEffect(() => {
@@ -185,7 +197,7 @@ const Browser: React.FC<browserProps> = ({
   }, [zoom])
 
   // sync currentTime with controller
-  useEffect(() => setTime(currentTime), [currentTime])
+  useEffect(() => setCurrentTime(currentTime), [currentTime])
 
   return (
     <>
