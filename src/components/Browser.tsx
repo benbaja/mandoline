@@ -195,6 +195,7 @@ const Browser: React.FC<browserProps> = ({
         onMouseEnter={() => setOnMouse(true)} 
         onMouseLeave={() => setOnMouse(false)}
         onMouseMove={handleMouseMove}
+        data-cy="browser"
       />
     </>
   )
