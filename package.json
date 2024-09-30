@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.8.0",
+    "@simonsmith/cypress-image-snapshot": "^9.1.0",
     "@types/file-saver": "^2.0.7",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",

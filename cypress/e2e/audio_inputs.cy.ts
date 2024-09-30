@@ -35,8 +35,43 @@ context('Files', () => {
   beforeEach(() => {
     cy.visit('http://localhost:5173/mandoline/')
   })
+  const fileExtensions = ["aiff", "flac", "m4a", "mp3", "ogg", "opus", "wav"]
+  fileExtensions.forEach(ext => {
+    it(`Import ${ext} file`, () => {
+      cy.get('[data-cy="asButton"]').click()
+      cy.get('[data-cy="asList"]').should("be.visible")
+      cy.get('[data-cy="asFileInput"]').selectFile(`cypress/fixtures/audio_files/audiotest.${ext}`)
+      cy.get('[data-cy="asButton"]').click()
+      cy.get('[data-cy="asList"]').should("not.be.visible")
+      // visual testing
+    })
+  })
+})
 
-  it("Import files", () => {
+context('Download', () => {
+  beforeEach(() => {
+    cy.visit('http://localhost:5173/mandoline/')
+  })
 
+  it("Downloads yt audio", () => {
+    cy.get('[data-cy="asButton"]').click()
+    cy.get('[data-cy="asList"]').should("be.visible")
+    cy.get('[data-cy="asURLInput"]').type("https://www.youtube.com/watch?v=jNQXAC9IVRw")
+    cy.get('[data-cy="asURLButton"]').click()
+    // wait for downloading / text change
+    cy.get('[data-cy="asButton"]').click()
+    cy.get('[data-cy="asList"]').should("not.be.visible")
+    // visual testing
+  })
+
+  it("Downloads an invalid URL", () => {
+    cy.get('[data-cy="asButton"]').click()
+    cy.get('[data-cy="asList"]').should("be.visible")
+    cy.get('[data-cy="asURLInput"]').type("https://www.google.com")
+    cy.get('[data-cy="asURLButton"]').click()
+    // wait for downloading
+    cy.get('[data-cy="asButton"]').click()
+    cy.get('[data-cy="asList"]').should("not.be.visible")
+    // visual testing
   })
 })
