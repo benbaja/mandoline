@@ -185,6 +185,7 @@ context("Slice management", () => {
     })
 
     it("Downloads slices", () => {
+        const downloadsFolder = Cypress.config("downloadsFolder")
         cy.get('[data-cy="browser"]').as("browser")
 
         cy.get("@browser").realMouseMove(100, 20)
@@ -201,8 +202,13 @@ context("Slice management", () => {
         cy.get('[data-cy="sList"]').children().last().find('[data-cy="sNameInput"]').clear()
         cy.get('[data-cy="sList"]').children().last().find('[data-cy="sNameInput"]').type("bB2")
 
-        
+        cy.get('[data-cy="sList"]').children().first().find('[data-cy="sDownload"]').click()
+        cy.readFile(`${downloadsFolder}/aA1.wav`)
+        cy.get('[data-cy="sList"]').children().last().find('[data-cy="sDownload"]').click()
+        cy.readFile(`${downloadsFolder}/bB2.wav`)
+
+        cy.get('[data-cy="sDownloadAll"]').click()
+        cy.readFile(`${downloadsFolder}/slices.zip`)
+        // check file size/integrity ?
     })
-    // check if downloaded slices are reversed !
-    // test if renamed slices match the filename
 })

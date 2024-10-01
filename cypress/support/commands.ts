@@ -37,6 +37,7 @@
 // }
 
 import {addMatchImageSnapshotCommand} from '@simonsmith/cypress-image-snapshot/command'
+import "cypress-downloadfile/lib/downloadFileCommand"
 import "cypress-real-events";
 
 addMatchImageSnapshotCommand({
