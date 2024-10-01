@@ -32,6 +32,8 @@ const SliceWaveform: React.FC<SliceWaveformProps> = ({highlightedSliceState, isP
       setIsPlaying(false)
       wavesurfer.loadBlob(sliceBlob)
     }
+
+    return () => wavesurfer?.empty()
   }, [highlightedSlice])
 
   useEffect(() => {

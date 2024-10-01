@@ -14,7 +14,7 @@ const SlicesList: React.FC<SlicesListProps> = ({slicesListState, highlightedSlic
   const [ highlightedSlice, setHighlightedSlice ] = highlightedSliceState
 
   const deleteSlice = (sliceToDelete: Slice) => {
-    if (sliceToDelete === highlightedSlice) {
+    if (sliceToDelete.region.id == highlightedSlice?.region.id) {
       setHighlightedSlice(undefined)
     }
     
@@ -25,6 +25,7 @@ const SlicesList: React.FC<SlicesListProps> = ({slicesListState, highlightedSlic
       }
     })
     setSlicesList(updatedSlicesList)
+    console.log(highlightedSlice)
   }
 
   const deleteAll = () => {
@@ -51,8 +52,8 @@ const SlicesList: React.FC<SlicesListProps> = ({slicesListState, highlightedSlic
     <div className={styles.slicesListContainer}>
       <div className={styles.slicesListHeader}>
         Slices 
-        <button onClick={deleteAll}>Delete all</button>
-        <button onClick={downloadAllSlices}>Download all</button>
+        <button onClick={deleteAll} data-cy="sDeleteAll" disabled={slicesList.length > 1 ? false : true}>Delete all</button>
+        <button onClick={downloadAllSlices} data-cy="sDownloadAll" disabled={slicesList.length > 1 ? false : true}>Download all</button>
       </div>
       <div className={styles.slicesList} data-cy="sList">
         {slicesList.map((slice) => {

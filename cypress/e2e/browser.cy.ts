@@ -75,6 +75,26 @@ context("Browser", () => {
         // try additional slices with zoomed in & out values
     })
 
+    it("Focuses slice with the browser", () => {
+        cy.get('[data-cy="browser"]').as("browser")
+
+        cy.get("@browser").realMouseMove(150, 20)
+        cy.get("@browser").dblclick()
+        cy.get("@browser").realMouseMove(300, 20)
+        cy.get("@browser").realClick()
+
+        cy.get("@browser").realMouseMove(450, 20)
+        cy.get("@browser").dblclick()
+        cy.get("@browser").realMouseMove(600, 20)
+        cy.get("@browser").realClick()
+
+        cy.get("@browser").realMouseMove(220, 20)
+        cy.get("@browser").realClick({x: 220, y:20})
+        cy.get('[data-cy="sList"]').children().first().should("satisfy", (el: JQuery<HTMLElement>) => el.attr("class").includes("highlightedSlice"))
+        cy.get('[data-cy="sList"]').children().last().should("not.satisfy", (el: JQuery<HTMLElement>) => el.attr("class").includes("highlightedSlice"))
+        
+    })
+
     it("Changes slice", () => {
         cy.get('[data-cy="browser"]').as("browser")
 

@@ -26,3 +26,5 @@ dist-ssr
 cypress/e2e/1-getting-started
 cypress/e2e/2-advanced-examples
 cypress/snapshots/audio_inputs.cy.ts/__diff_output__
+cypress/snapshots/browser.cy.ts/__diff_output__
+cypress/snapshots/slice_mgmt.cy.ts/__diff_output__

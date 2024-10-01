@@ -19,8 +19,8 @@ const SliceIndex: React.FC<sliceIdxProps> = ({slice, isHighlighted, highlightSli
 
 
   return (
-    <div onClick={() => highlightSlice(slice)} className={`${styles.sliceIndex} ${isHighlighted ? styles.highlightedSlice : ''}`}>
-      <div className={styles.sliceIndexInfo}>
+    <div className={`${styles.sliceIndex} ${isHighlighted ? styles.highlightedSlice : ''}`}>
+      <div className={styles.sliceIndexInfo} onClick={() => highlightSlice(slice)} >
           <input onChange={handleNameChange} value={sliceName} data-cy="sNameInput"></input>
           <div data-cy="sLength">{slice.getLength()}</div>
       </div>
