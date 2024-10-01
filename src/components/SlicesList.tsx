@@ -54,7 +54,7 @@ const SlicesList: React.FC<SlicesListProps> = ({slicesListState, highlightedSlic
         <button onClick={deleteAll}>Delete all</button>
         <button onClick={downloadAllSlices}>Download all</button>
       </div>
-      <div className={styles.slicesList}>
+      <div className={styles.slicesList} data-cy="sList">
         {slicesList.map((slice) => {
             return(
               <SliceIndex key={slice.region.id}

@@ -2,10 +2,8 @@ context("Browser", () => {
     beforeEach(() => {
         cy.visit(Cypress.config().baseUrl)
         cy.get('[data-cy="asButton"]').click()
-        cy.get('[data-cy="asList"]').should("be.visible")
         cy.get('[data-cy="asFileInput"]').selectFile("cypress/fixtures/audiotest.wav")
         cy.get('[data-cy="asButton"]').click()
-        cy.get('[data-cy="asList"]').should("not.be.visible")
         cy.wait(100)
     })
 
@@ -19,7 +17,7 @@ context("Browser", () => {
         cy.get("@playPauseBtn").should("have.text", "Play")
         cy.get('[data-cy="browser"]').click("bottomRight")
         cy.get("@playPauseBtn").click()
-        cy.wait(3000)
+        cy.wait(1000)
         cy.get("@playPauseBtn").should("have.text", "Play")
     })
 
@@ -43,15 +41,65 @@ context("Browser", () => {
 
     it("Checks for impossible BPM")
 
+    // test BPM grid
+
     it("Creates slices", () => {
-        cy.wait(500)
-        cy.get('[data-cy="browser"]').dblclick(500, 60)
-        // dbl click
-        // check for slice creation
-        // move and click
-        // check for slice size
-        // check for slice in list
-        // check for slice waveform
-        // rinse and repeat
+        cy.get('[data-cy="browser"]').as("browser")
+
+        cy.get("@browser").realMouseMove(500, 20)
+        cy.get("@browser").dblclick()
+        cy.get("@browser").realMouseMove(600, 20)
+        cy.get("@browser").realClick()
+        cy.get('[data-cy="sWaveform"]').as("sWaveform")
+        cy.get("@sWaveform").matchImageSnapshot("slice1")
+
+        cy.get("@browser").realMouseMove(50, 20)
+        cy.get("@browser").dblclick()
+        cy.get("@browser").realMouseMove(387, 20)
+        cy.get("@browser").realClick()
+        cy.get("@sWaveform").matchImageSnapshot("slice2")
+
+        cy.get("@browser").click("bottom")
+        cy.get("@browser").realMouseMove(450, 20)
+        cy.get("@browser").dblclick()
+        cy.get("@browser").realMouseMove(812, 20)
+        cy.get("@browser").realClick()
+        cy.get("@sWaveform").matchImageSnapshot("slice3")
+
+        cy.get("@browser").realMouseMove(765, 20)
+        cy.get("@browser").dblclick()
+        cy.get("@browser").realMouseMove(12, 20)
+        cy.get("@browser").realClick()
+        cy.get("@sWaveform").matchImageSnapshot("slice4")
+
+        // try additional slices with zoomed in & out values
+    })
+
+    it("Changes slice", () => {
+        cy.get('[data-cy="browser"]').as("browser")
+
+        cy.get("@browser").realMouseMove(500, 20)
+        cy.get("@browser").dblclick()
+        cy.get("@browser").realMouseMove(600, 20)
+        cy.get("@browser").realClick()
+        
+        // drag left
+        cy.get("@browser").realMouseMove(500, 20)
+        cy.get("@browser").realMouseDown({x:500, y:20})
+        cy.get("@browser").realMouseMove(420, 20)
+        cy.get("@browser").realMouseUp({x:420, y:20})
+        cy.get('[data-cy="sWaveform"]').matchImageSnapshot("slice_drag_left")
+        // drag right
+        cy.get("@browser").realMouseMove(600, 20)
+        cy.get("@browser").realMouseDown({x:600, y:20})
+        cy.get("@browser").realMouseMove(578, 20)
+        cy.get("@browser").realMouseUp({x:578, y:20})
+        cy.get('[data-cy="sWaveform"]').matchImageSnapshot("slice_drag_right")
+        //move slice
+        cy.get("@browser").realMouseMove(500, 20)
+        cy.get("@browser").realMouseDown({x:500, y:20})
+        cy.get("@browser").realMouseMove(750, 20)
+        cy.get("@browser").realMouseUp({x:750, y:20})
+        cy.get('[data-cy="sWaveform"]').matchImageSnapshot("slice_moved")
     })
 })

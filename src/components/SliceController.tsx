@@ -35,13 +35,13 @@ const SliceController: React.FC<SliceControllerProps> = ({highlightedSliceState}
   return (
     <div className={styles.sliceController}>
       <div className={styles.sliceControllerToolbar}>
-        <button onClick={handlePlayPause} disabled={highlightedSlice ? false : true}>
+        <button onClick={handlePlayPause} disabled={highlightedSlice ? false : true} data-cy="sPlayPause">
           {isPlaying ? "Pause" : "Play"}
         </button>
-        <button onClick={handleLoop} disabled={highlightedSlice ? false : true}>
+        <button onClick={handleLoop} disabled={highlightedSlice ? false : true} data-cy="sLoop">
           {highlightedSlice?.settings.isLooped ? "Looped" : "Loop"}
         </button>
-        <button onClick={handleReverse} disabled={highlightedSlice ? false : true}>
+        <button onClick={handleReverse} disabled={highlightedSlice ? false : true} data-cy="sReverse">
           {highlightedSlice?.settings.isReversed ? "=>" : "<="}
         </button>
 

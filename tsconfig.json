@@ -7,5 +7,5 @@
   "compilerOptions": {
     "esModuleInterop": true
   },
-  "include": ["src", "cypress"]
+  "include": ["src", "cypress", "cypress-real-events"]
 }

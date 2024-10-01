@@ -52,12 +52,11 @@ const SliceWaveform: React.FC<SliceWaveformProps> = ({highlightedSliceState, isP
   }, [highlightedSlice, isLooped])
 
   return (
-    <>
       <div 
         ref={containerRef} 
         className={styles.sliceWaveform}
+        data-cy="sWaveform"
       />
-    </>
   )
 }
 

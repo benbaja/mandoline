@@ -37,6 +37,7 @@
 // }
 
 import {addMatchImageSnapshotCommand} from '@simonsmith/cypress-image-snapshot/command'
+import "cypress-real-events";
 
 addMatchImageSnapshotCommand({
     failureThreshold: 0.2,

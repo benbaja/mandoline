@@ -21,13 +21,13 @@ const SliceIndex: React.FC<sliceIdxProps> = ({slice, isHighlighted, highlightSli
   return (
     <div onClick={() => highlightSlice(slice)} className={`${styles.sliceIndex} ${isHighlighted ? styles.highlightedSlice : ''}`}>
       <div className={styles.sliceIndexInfo}>
-          <input onChange={handleNameChange} value={sliceName}></input>
-          {slice.getLength()}
+          <input onChange={handleNameChange} value={sliceName} data-cy="sNameInput"></input>
+          <div data-cy="sLength">{slice.getLength()}</div>
       </div>
       <div className={styles.sliceIndexButtons}>
-        <button onClick={() => deleteSlice(slice)}>x</button>
+        <button onClick={() => deleteSlice(slice)} data-cy="sDelete">x</button>
         <a href={slice.downloadUrl} download={`${sliceName}.wav`}>
-          <button>dl</button>
+          <button data-cy="sDownload">dl</button>
         </a>
       </div>
     </div>
